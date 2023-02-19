@@ -1,0 +1,59 @@
+﻿<ul class="list-unstyled">
+    @foreach(var animal in animals)
+    {
+       <li class="media my-3">
+           <div class="media-img-wrapper mr-2">
+               <a href="/animal/@animal.Id">
+                   <img class="media-img" src="@animal.Image" alt="@animal.Name" />
+               </a>
+           </div>
+           <div class="media-body">
+               <a href="/animal/@animal.Id">
+                   <h4 class="mb-0">@animal.Name</h4>
+               </a>
+                <div class="text-info">Płeć: @animal.Gender</div>
+                <div class="text-info">Miasto: @animal.City</div>
+                <div class="text-info">Krótki opis: @animal.ShortDescription</div>
+                <div class="text-secondary">Status zdrowia: @animal.HealthStatus</div>
+           </div>
+       </li> 
+    }
+</ul>
+
+@code {
+    List<Animal> animals = new List<Animal>
+    {
+        new Animal
+        {
+            Id = 1,
+            Name = "Bazylka",
+            SpeciesId = 1,
+            IsAdopted = false,
+            Gender = GenderContants.Female,
+            HealthStatus = HealthStatusContants.Healthy,
+            Image = "https://iili.io/HE4Rt5X.jpg",
+            ShortDescription = "Śmieszna wiewiórka, lubi jeść",
+            City = "Kraków",
+            Province = "Małopolskie",
+            DateOfBirth = new DateTime(2019, 01, 01),
+            CreateDate = DateTime.UtcNow,
+            Deleted = false,
+        },
+        new Animal
+        {
+            Id = 1,
+            Name = "Chlebusz",
+            SpeciesId = 1,
+            IsAdopted = false,
+            Gender = GenderContants.Male,
+            ShortDescription = "Królik nie z tego świata",
+            HealthStatus = HealthStatusContants.Healthy,
+            Image = "https://iili.io/HE4RDen.jpg",
+            City = "Kraków",
+            Province = "Małopolskie",
+            DateOfBirth = new DateTime(2019, 03, 05),
+            CreateDate = DateTime.UtcNow,
+            Deleted = false,
+        }
+    };
+}
