@@ -1,30 +1,34 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject ISpeciesService SpeciesService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">AdoptionApplication</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <a class="navbar-brand" href="#">AdoptionApplication</a>
+        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">
+                <span class="oi oi-home mr-2"></span> Home
+            </a>
+        </li>
+        <li class="dropdown-divider"></li>
+        @foreach (var species in SpeciesService.Species)
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="@species.Url">
+                    <head>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+                    </head>
+                    <i class="@species.Icon mr-2"></i> @species.Name
+                </a>
+            </li>
+        }
+    </ul>
 </div>
 
 @code {
@@ -35,5 +39,10 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        SpeciesService.LoadSpecies();
     }
 }

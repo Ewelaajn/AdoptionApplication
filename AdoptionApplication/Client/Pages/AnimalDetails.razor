@@ -1,0 +1,49 @@
+﻿@page "/animal/{id}"
+@inject IAnimalService AnimalService
+
+<div class="media">
+    <div class="media-img-big-wrapper mr-2">
+        <img class="media-img-big" src="@animal.Image" alt="@animal.Name" />
+    </div>
+    <div class="media-body">
+        <h2 class="mb-0" style="font-size: 2rem;">@animal.Name</h2>
+        <div class="text-info mb-0" style="font-size: 1.2rem;">Płeć: @animal.Gender</div>
+        <div class="text-info mb-2" style="font-size: 1.2rem;">Miasto: @animal.City</div>
+        <div class="animal-description" style="font-size: 1.2rem;">
+            @foreach (var line in animal.Description.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
+            {
+                <div style="margin-bottom: 0.5rem;">@line</div>
+            }
+        </div>
+        @if (animal.HealthStatus == HealthStatusContants.Healthy)
+        {
+            <div class="text-success mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
+        }
+        else
+        {
+            <div class="text-danger mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
+        }
+        <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+        </head>
+        <button class="btn btn-primary btn-lg" style="font-size: 1.2rem;"><i class="fas fa-home"></i>&nbsp;&nbsp;Adoptuj</button>
+    </div>
+</div>
+
+
+@code {
+    private Animal animal = null;
+
+    [Parameter]
+    public string Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (AnimalService.Animals == null || AnimalService.Animals.Count == 0)
+        {
+            AnimalService.LoadAnimals();
+        }
+
+        animal = AnimalService.Animals.FirstOrDefault(x => x.Id == Int32.Parse(Id));
+    }
+}

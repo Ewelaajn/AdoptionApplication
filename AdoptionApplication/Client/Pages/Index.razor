@@ -1,3 +1,29 @@
 ﻿@page "/"
+@page "/{speciesUrl}"
+@inject ISpeciesService SpeciesService
 
-<AnimalsList />
+@if(species != null)
+{
+    <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
+    <AnimalsList SpeciesId="@species.Id" />
+}   
+else
+{
+    <h1>Zapoznaj się ze zwierzakami, które szukają domu!</h1>
+    <AnimalsList />
+}
+
+@code{
+    [Parameter]
+    public string SpeciesUrl { get; set; }
+
+    private Species species = null;
+
+    protected override void OnParametersSet()
+    {
+        if (SpeciesUrl != null)
+            species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
+        else
+            species = null;
+    }
+}
