@@ -35,13 +35,6 @@ a, .btn-link {
 }
 
 
-ul.list-unstyled li.media {
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
 
 ul.list-unstyled li.media:hover {
     border: 1px solid #6c757d;
