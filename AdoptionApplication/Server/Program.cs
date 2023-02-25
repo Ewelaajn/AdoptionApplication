@@ -1,7 +1,14 @@
+using AdoptionApplication.Server.Data;
 using AdoptionApplication.Server.Services.Animals;
 using AdoptionApplication.Server.Services.SpeciesService;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var config = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false)
+        .Build();
 
 // Add services to the container.
 
@@ -9,6 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<ISpeciesService, SpeciesService>();
+builder.Services.AddDbContext<DataContext>(o => o.UseNpgsql(config.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
