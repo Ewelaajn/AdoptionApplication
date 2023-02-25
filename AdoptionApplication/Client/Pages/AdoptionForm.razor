@@ -1,0 +1,184 @@
+﻿@page "/animal/{id:int}/adoptionForm"
+@inject IAnimalService AnimalService
+@using System.ComponentModel.DataAnnotations
+@using System.Net.Http.Json
+@using System.Net;
+
+@if (animal != null)
+{
+    <div class="animal-details">
+        <h2 class="animal-name">Formularz adopcyjny @animal.Name</h2>
+        <img class="animal-image" src="@animal.Image" alt="@animal.Name" />
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        Zwierzę o podanym Id nie zostało znalezione.
+    </div>
+}
+
+<form>
+    <div class="form-group">
+        <label for="Imię">Imię:</label>
+        <input type="text" class="form-control" id="Imię" name="Imię" @bind="@adoptionForm.FirstName">
+        @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <div class="form-group">
+        <label for="Nazwisko">Nazwisko:</label>
+        <input type="text" class="form-control" id="Nazwisko" name="Nazwisko" @bind="@adoptionForm.LastName">
+        @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <div class="form-group">
+        <label for="Wiek">Wiek:</label>
+        <input type="number" class="form-control" id="Wiek" name="Wiek" @bind="@adoptionForm.Age">
+        @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <div class="form-group">
+        <label for="Email">Email:</label>
+        <input type="email" class="form-control" id="Email" name="Email" @bind="@adoptionForm.Email">
+        @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <div class="form-group">
+        <label for="NumerTelefonu">Numer telefonu:</label>
+        <input type="tel" class="form-control" id="NumerTelefonu" name="NumerTelefonu" @bind="@adoptionForm.PhoneNumber">
+        @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <div class="form-group">
+        <label for="OMnie">O mnie:</label>
+        <textarea class="form-control" id="OMnie" name="OMnie" rows="3" @bind="@adoptionForm.AboutMe"></textarea>
+        @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
+        {
+            <div class="invalid-feedback">
+                To pole nie może być puste.
+            </div>
+            formValid = false;
+        }
+        else
+        {
+            formValid = true;
+        }
+    </div>
+    <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+</form>
+
+@if (IsSubmitting)
+{
+    <div class="alert alert-info" role="alert">
+        Wysyłanie formularza...
+    </div>
+}
+else if (IsSubmitted)
+{
+    <div class="alert alert-success" role="alert">
+        Formularz został wysłany!
+    </div>
+}
+
+
+@code {
+    private UserAdoptionForm adoptionForm = new UserAdoptionForm();
+    private Animal animal = new Animal();
+    private bool formValid = true;
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject]
+    public NavigationManager Navigation { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        animal = await AnimalService.GetAnimalAsync(Id);
+        if (animal != null)
+        {
+            adoptionForm = new UserAdoptionForm();
+            adoptionForm.AnimalId = Id;
+        }
+        else
+        {
+            //handle error
+        }
+    }
+
+    private bool IsSubmitting = false;
+    private bool IsSubmitted = false;
+
+    private async Task HandleSubmit()
+    {
+        IsSubmitting = true;
+        StateHasChanged();
+
+        try
+        {
+            IsSubmitting = true;
+            StateHasChanged();
+
+            // Tu możesz dodać kod zapisujący dane formularza w bazie danych
+
+            await Task.Delay(10000); // symulacja wysyłania formularza
+
+            IsSubmitting = false;
+            IsSubmitted = true;
+            StateHasChanged();
+
+            // przekierowanie na stronę zwierzaka
+            Navigation.NavigateTo($"/animal/{animal.Id}");
+        }
+        catch (Exception)
+        {
+            // handle exception
+        }
+    }
+}

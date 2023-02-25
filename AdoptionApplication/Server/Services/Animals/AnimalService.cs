@@ -1,6 +1,7 @@
-﻿using AdoptionApplication.Server.Services.SpeciesService;
+﻿using AdoptionApplication.Server.Data;
+using AdoptionApplication.Server.Services.SpeciesService;
 using AdoptionApplication.Shared;
-using AdoptionApplication.Shared.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdoptionApplication.Server.Services.Animals
 {
@@ -9,20 +10,22 @@ namespace AdoptionApplication.Server.Services.Animals
         public ICollection<Animal> Animals { get; set; } = new List<Animal>();
 
         private readonly ISpeciesService _speciesService;
+        private readonly DataContext _dataContext;
 
-        public AnimalService(ISpeciesService speciesService)
+        public AnimalService(ISpeciesService speciesService, DataContext dataContext)
         {
             _speciesService = speciesService;
+            _dataContext = dataContext;
         }
 
-        public async Task<Animal> GetAnimalByIdAsync(int id) => Animals.FirstOrDefault(x => x.Id == id);
+        public async Task<Animal> GetAnimalByIdAsync(int id) => await _dataContext.Animals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<ICollection<Animal>> GetAnimalsAsync() => Animals;
+        public async Task<ICollection<Animal>> GetAnimalsAsync() => await _dataContext.Animals.AsNoTracking().ToListAsync();
 
         public async Task<ICollection<Animal>> GetAnimalsBySpeciesAsync(string speciesUrl)
         {
             var species = await _speciesService.GetSpeciesByUrlAsync(speciesUrl);
-            return Animals.Where(x => x.SpeciesId == species.Id).ToList();
+            return await _dataContext.Animals.AsNoTracking().Where(x => x.SpeciesId == species.Id).ToListAsync();
         }
     }
 }
