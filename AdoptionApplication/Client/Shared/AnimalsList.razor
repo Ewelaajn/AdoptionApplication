@@ -1,7 +1,8 @@
 ﻿@inject IAnimalService AnimalService
+@implements IDisposable
 
 <ul class="list-unstyled">
-    @foreach (var animal in SpeciesId == null ? AnimalService.Animals : AnimalService.Animals.Where(x => x.SpeciesId == SpeciesId))
+    @foreach (var animal in AnimalService.Animals)
     {
        <li class="media my-3">
            <div class="media-img-wrapper mr-2">
@@ -30,11 +31,17 @@
 </ul>
 
 @code {
-    [Parameter]
-    public int? SpeciesId { get; set; } = null;
+    //[Parameter]
+    //public int? SpeciesId { get; set; } = null;
 
     protected override void OnInitialized()
     {
-        AnimalService.LoadAnimals();
+        //await AnimalService.LoadAnimals();
+        AnimalService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AnimalService.OnChange -= StateHasChanged;
     }
 }

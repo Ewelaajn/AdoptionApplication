@@ -1,4 +1,5 @@
 ﻿using AdoptionApplication.Shared;
+using System.Net.Http.Json;
 
 namespace AdoptionApplication.Client.Services.SpeciesService
 {
@@ -6,38 +7,16 @@ namespace AdoptionApplication.Client.Services.SpeciesService
     {
         public ICollection<Species> Species { get ; set; } = new List<Species>();
 
-        public void LoadSpecies()
+        private readonly HttpClient _httpClient;
+
+        public SpeciesService(HttpClient httpClient)
         {
-            Species = new List<Species>
-            {
-                new Species
-                {
-                    Id = 1,
-                    Name = "Króliki",
-                    Url = "rabbits",
-                    Icon = "fa-solid fa-carrot",
-                    CreateDate = DateTime.UtcNow,
-                    Deleted = false
-                },
-                new Species
-                {
-                    Id = 2,
-                    Name = "Psy",
-                    Url = "dogs",
-                    Icon = "fas fa-dog",
-                    CreateDate = DateTime.UtcNow,
-                    Deleted = false
-                },
-                new Species
-                {
-                    Id = 3,
-                    Name = "Koty",
-                    Url = "cats",
-                    Icon = "fas fa-cat",
-                    CreateDate = DateTime.UtcNow,
-                    Deleted = false
-                }
-            };
+            _httpClient = httpClient;
+        }
+
+        public async Task LoadSpecies()
+        {
+            Species = await _httpClient.GetFromJsonAsync<ICollection<Species>>("api/Species");
         }
     }
 }

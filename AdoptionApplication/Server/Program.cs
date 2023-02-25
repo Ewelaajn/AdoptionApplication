@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using AdoptionApplication.Server.Services.Animals;
+using AdoptionApplication.Server.Services.SpeciesService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IAnimalService, AnimalService>();
+builder.Services.AddScoped<ISpeciesService, SpeciesService>();
 
 var app = builder.Build();
 
