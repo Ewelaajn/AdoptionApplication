@@ -18,100 +18,6 @@ else
     </div>
 }
 
-<form>
-    <div class="form-group">
-        <label for="Imię">Imię:</label>
-        <input type="text" class="form-control" id="Imię" name="Imię" @bind="@adoptionForm.FirstName">
-        @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <div class="form-group">
-        <label for="Nazwisko">Nazwisko:</label>
-        <input type="text" class="form-control" id="Nazwisko" name="Nazwisko" @bind="@adoptionForm.LastName">
-        @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <div class="form-group">
-        <label for="Wiek">Wiek:</label>
-        <input type="number" class="form-control" id="Wiek" name="Wiek" @bind="@adoptionForm.Age">
-        @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <div class="form-group">
-        <label for="Email">Email:</label>
-        <input type="email" class="form-control" id="Email" name="Email" @bind="@adoptionForm.Email">
-        @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <div class="form-group">
-        <label for="NumerTelefonu">Numer telefonu:</label>
-        <input type="tel" class="form-control" id="NumerTelefonu" name="NumerTelefonu" @bind="@adoptionForm.PhoneNumber">
-        @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <div class="form-group">
-        <label for="OMnie">O mnie:</label>
-        <textarea class="form-control" id="OMnie" name="OMnie" rows="3" @bind="@adoptionForm.AboutMe"></textarea>
-        @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
-        {
-            <div class="invalid-feedback">
-                To pole nie może być puste.
-            </div>
-            formValid = false;
-        }
-        else
-        {
-            formValid = true;
-        }
-    </div>
-    <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
-</form>
-
 @if (IsSubmitting)
 {
     <div class="alert alert-info" role="alert">
@@ -124,7 +30,102 @@ else if (IsSubmitted)
         Formularz został wysłany!
     </div>
 }
-
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="Imię">Imię:</label>
+            <input type="text" class="form-control" id="Imię" name="Imię" @bind="@adoptionForm.FirstName">
+            @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="Nazwisko">Nazwisko:</label>
+            <input type="text" class="form-control" id="Nazwisko" name="Nazwisko" @bind="@adoptionForm.LastName">
+            @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="Wiek">Wiek:</label>
+            <input type="number" class="form-control" id="Wiek" name="Wiek" @bind="@adoptionForm.Age">
+            @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="Email">Email:</label>
+            <input type="email" class="form-control" id="Email" name="Email" @bind="@adoptionForm.Email">
+            @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="NumerTelefonu">Numer telefonu:</label>
+            <input type="tel" class="form-control" id="NumerTelefonu" name="NumerTelefonu" @bind="@adoptionForm.PhoneNumber">
+            @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="OMnie">O mnie:</label>
+            <textarea class="form-control" id="OMnie" name="OMnie" rows="3" @bind="@adoptionForm.AboutMe"></textarea>
+            @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
+            {
+                <div class="invalid-feedback">
+                    To pole nie może być puste.
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+    </form>
+}
 
 @code {
     private UserAdoptionForm adoptionForm = new UserAdoptionForm();
