@@ -23,80 +23,68 @@ else if (internalError)
         </button>
     </div>
 }
-else if (showErrorMessage)
+else if (showSuccessMessage)
 {
     <div class="alert alert-success" role="alert">
         Nowy gatunek został dodany!
     </div>
 }
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 mx-auto">
-            <h1 class="text-center">Dodaj nowy gatunek</h1>
-            <form>
-                <div class="form-group">
-                    <label for="Name">Nazwa:</label>
-                    <input type="text" class="form-control" id="Name" name="Name" @bind="@newSpecies.Name">
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Name))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
+else
+{
+ <div class="container">
+    <h1>Dodaj nowy gatunek zwierzęcia</h1>
+    <form class="form" @onsubmit="AddSpecies">
+        <div class="form-group">
+            <label for="nazwa">Nazwa:</label>
+            <input type="text" class="form-control" id="nazwa" @bind="@newSpecies.Name" required>
+            @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
                 </div>
-                <div class="form-group">
-                    <label for="Url">Url:</label>
-                    <input type="text" class="form-control" id="Url" name="Url" @bind="@newSpecies.Url">
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Url))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
-                </div>
-                <div class="form-group">
-                    <label for="Icon">Ikona:</label>
-                    <input type="text" class="form-control" id="Icon" name="Icon" @bind="@newSpecies.Icon">
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Icon))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
-                </div>
-                <div class="ml-auto">
-                    <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
-                        @ErrorMessagesConstants.ValidationFailed
-                    </div>
-                    <div class="alert alert-success d-none" @bind:hidden="@showErrorMessage" id="success-message">
-                        Formularz został wysłany
-                    </div>
-                    <button type="submit" class="btn btn-primary" disabled="@(!formValid)" @onclick="HandleSubmit">
-                        <span class="oi oi-plus"></span>
-                        Dodaj
-                    </button>
-                </div>
-            </form>
-
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
         </div>
-    </div>
+        <div class="form-group">
+            <label for="url">Url:</label>
+            <input type="text" class="form-control" id="url" @bind="@newSpecies.Url" required>
+            @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="ikona">Ikona:</label>
+            <input type="text" class="form-control" id="ikona" @bind="@newSpecies.Icon" required>
+            @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <button type="submit" class="btn btn-primary" disabled="@(!formValid)">
+                <span class="oi oi-plus"></span> Dodaj
+        </button>
+    </form>
 </div>
+}
 
 @code {
     private Species newSpecies = new Species();
@@ -108,12 +96,16 @@ else if (showErrorMessage)
     [Inject]
     public NavigationManager Navigation { get; set; }
 
-    private async Task HandleSubmit()
+    protected override async Task OnInitializedAsync()
+    {
+        newSpecies = new Species();
+    }
+
+    private async Task AddSpecies()
     {
         try
         {
-            var result = await SpeciesService.UpsertSpecies(default, newSpecies);
-
+            var result = await SpeciesService.UpsertSpecies(newSpecies);
             if (result != null)
             {
                 showErrorMessage = false;
@@ -128,7 +120,7 @@ else if (showErrorMessage)
                 showSuccessMessage = false;
                 StateHasChanged();
                 await Task.Delay(3000);
-                return;
+                Navigation.NavigateTo("/");
             }
         }
         catch (Exception)
@@ -137,7 +129,6 @@ else if (showErrorMessage)
             StateHasChanged();
             await Task.Delay(3000);
             Navigation.NavigateTo("/");
-            return;
         }
-    }
+   }
 }

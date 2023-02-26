@@ -20,13 +20,9 @@ namespace AdoptionApplication.Client.Services.SpeciesService
             Species = await _httpClient.GetFromJsonAsync<ICollection<Species>>("api/Species");
         }
 
-        public async Task<Species> UpsertSpecies(int? id, Species species)
+        public async Task<Species> UpsertSpecies(Species species)
         {
-            HttpResponseMessage result;
-            if(id != null)
-                result = await _httpClient.PutAsJsonAsync<Species>($"api/Species/{id}", species);
-            else
-                result = await _httpClient.PostAsJsonAsync<Species>($"api/Species", species);
+            var result = await _httpClient.PutAsJsonAsync("api/Species", species);
 
             if (!result.IsSuccessStatusCode)
                 return null;

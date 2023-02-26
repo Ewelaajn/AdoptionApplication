@@ -21,6 +21,7 @@ namespace AdoptionApplication.Server.Data
                 entity.ToTable("Animal");
 
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("CURRENT_DATE");
+                entity.Property(e => e.Deleted).HasDefaultValue(false);
 
                 entity.HasOne(d => d.Species)
                     .WithMany(p => p.Animals)
@@ -98,6 +99,8 @@ namespace AdoptionApplication.Server.Data
             modelBuilder.Entity<Species>(entity =>
             {
                 entity.ToTable("Species");
+                entity.HasKey(x => x.Id);
+                entity.Property(e => e.Deleted).HasDefaultValue(false);
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("CURRENT_DATE");
                 entity.HasData(
                     new Species
@@ -129,6 +132,8 @@ namespace AdoptionApplication.Server.Data
             modelBuilder.Entity<UserAdoptionForm>(entity =>
             {
                 entity.ToTable("UserAdoptionForm");
+                entity.HasKey(x => x.Id);
+                entity.Property(e => e.Deleted).HasDefaultValue(false);
                 entity.HasKey(e => e.Id);
                 entity.HasOne(d => d.Animal);
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("CURRENT_DATE");

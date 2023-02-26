@@ -27,29 +27,47 @@ namespace AdoptionApplication.Server.Services.SpeciesService
             return await _dataContext.Species.AsNoTracking().FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower());
         }
 
-        public async Task<Species> UpsertNewSpecies(int? id, Species species)
+        public async Task<Species> UpsertNewSpecies(Species species)
         {
-            var validation = _validator.Validate(species);
-            if (!validation.IsValid)
-                return null;
-
-            if (id != null)
+            try
             {
-                var dbSpecies = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == id);
-                if(dbSpecies != null)
-                {
-                    dbSpecies.Url = species.Url;
-                    dbSpecies.Name = species.Name;
-                    dbSpecies.Icon = species.Icon;
-                }
-                else
-                    _dataContext.Species.Add(species);
-            }
-            else
-                _dataContext.Species.Add(species);
+                var validation = _validator.Validate(species);
+                if (!validation.IsValid)
+                    return null;
 
-            await _dataContext.SaveChangesAsync();
-            return species;
+                
+                if (species.Id > 0)
+                {
+                    var dbSpecies = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == species.Id);
+                    if (dbSpecies != null)
+                    {
+                        dbSpecies.Url = species.Url;
+                        dbSpecies.Name = species.Name;
+                        dbSpecies.Icon = species.Icon;
+                    }
+                    else
+                        _dataContext.Species.Add(species);
+                }
+                else if(species.Id == 0 || species.Id == null)
+                {
+                    var isSpeciesExists = await _dataContext.Species.FirstOrDefaultAsync(x => x.Name.ToLower() == species.Name.ToLower());
+                    if(isSpeciesExists != null)
+                    {
+                        isSpeciesExists.Url = species.Url;
+                        isSpeciesExists.Name = species.Name;
+                        isSpeciesExists.Icon = species.Icon;
+                    }
+                    else
+                        _dataContext.Species.Add(species);
+                }
+                    
+                await _dataContext.SaveChangesAsync();
+                return species;
+            }
+            catch(Exception ex)
+            {
+                throw (ex);
+            }
         }
     }
 }

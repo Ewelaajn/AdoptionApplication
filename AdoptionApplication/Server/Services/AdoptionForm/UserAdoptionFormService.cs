@@ -20,7 +20,7 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
         public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm newForm)
         {
             var validation = _validator.Validate(newForm);
-            if(!validation.IsValid)
+            if (!validation.IsValid)
                 return null;
 
             newForm.Deleted = false;
