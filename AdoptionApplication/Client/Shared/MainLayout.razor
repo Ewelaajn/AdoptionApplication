@@ -1,13 +1,21 @@
 ﻿@inherits LayoutComponentBase
-
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
-
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <div class="d-flex justify-content-start align-items-center">
+                <a href="/animal/all" class="custom-btn">
+                    Wszystkie zwierzęta
+                </a>
+                <a href="/animal/species/all" class="custom-btn">
+                    Wszystkie gatunki
+                </a>
+                <a href="/animal/adoptionForm/all" class="custom-btn">
+                    Formularze adopcyjne
+                </a>
+            </div>
         </div>
 
         <article class="content px-4">
