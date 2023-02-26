@@ -128,6 +128,11 @@ option.bg-light {
 }
 
  /* Zablokowany przycisk zatwierdzenia */
+.btn-success:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 .btn-primary:disabled {
     opacity: 0.65;
     cursor: not-allowed;
