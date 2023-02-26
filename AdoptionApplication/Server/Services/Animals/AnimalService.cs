@@ -20,7 +20,7 @@ namespace AdoptionApplication.Server.Services.Animals
 
         public async Task<Animal> GetAnimalByIdAsync(int id) => await _dataContext.Animals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<ICollection<Animal>> GetAnimalsAsync() => await _dataContext.Animals.AsNoTracking().ToListAsync();
+        public async Task<ICollection<Animal>> GetAnimalsAsync() => await _dataContext.Animals.AsNoTracking().Where(x => x.Deleted == false).ToListAsync();
 
         public async Task<ICollection<Animal>> GetAnimalsBySpeciesAsync(string speciesUrl)
         {

@@ -12,6 +12,7 @@ namespace AdoptionApplication.Server.Data
 
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Species> Species { get; set; }
+        public DbSet<UserAdoptionForm> AdoptionForms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -123,6 +124,14 @@ namespace AdoptionApplication.Server.Data
                     Icon = "fas fa-cat",
                     Deleted = false
                 });
+            });
+
+            modelBuilder.Entity<UserAdoptionForm>(entity =>
+            {
+                entity.ToTable("UserAdoptionForm");
+                entity.HasKey(e => e.Id);
+                entity.HasOne(d => d.Animal);
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("CURRENT_DATE");
             });
         }        
     }

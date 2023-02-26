@@ -1,5 +1,6 @@
 ﻿@page "/animal/{id:int}/adoptionForm"
 @inject IAnimalService AnimalService
+@inject IAdoptionFormService AdoptionFormService
 @using System.ComponentModel.DataAnnotations
 @using System.Net.Http.Json
 @using System.Net;
@@ -14,20 +15,31 @@
 else
 {
     <div class="alert alert-danger" role="alert">
-        Zwierzę o podanym Id nie zostało znalezione.
+        Wczytywanie formularza...
     </div>
 }
 
-@if (IsSubmitting)
+@if (showErrorMessage)
 {
-    <div class="alert alert-info" role="alert">
-        Wysyłanie formularza...
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            Coś poszło nie tak, spróbuj ponownie.
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
     </div>
 }
 else if (IsSubmitted)
 {
     <div class="alert alert-success" role="alert">
         Formularz został wysłany!
+    </div>
+}
+else if (IsSubmitting)
+{
+     <div class="alert alert-info" role="alert">
+        Wysyłanie formularza...
     </div>
 }
 else
@@ -123,15 +135,24 @@ else
                 formValid = true;
             }
         </div>
-        <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+        <div class="ml-auto">
+            <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
+                Coś poszło nie tak, spróbuj ponownie
+            </div>
+            <div class="alert alert-success d-none" @bind:hidden="@showErrorMessage" id="success-message">
+                Formularz został wysłany
+            </div>
+            <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+        </div>
     </form>
 }
 
 @code {
     private UserAdoptionForm adoptionForm = new UserAdoptionForm();
-    private Animal animal = new Animal();
+    private Animal animal = null;
     private bool formValid = true;
-
+    private bool showErrorMessage = false;
+    private bool showSuccessMessage = false;
 
     [Parameter]
     public int Id { get; set; }
@@ -139,7 +160,7 @@ else
     [Inject]
     public NavigationManager Navigation { get; set; }
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         animal = await AnimalService.GetAnimalAsync(Id);
         if (animal != null)
@@ -167,19 +188,36 @@ else
             StateHasChanged();
 
             // Tu możesz dodać kod zapisujący dane formularza w bazie danych
+            var result = await AdoptionFormService.AddNewForm(adoptionForm);
 
-            await Task.Delay(10000); // symulacja wysyłania formularza
-
-            IsSubmitting = false;
-            IsSubmitted = true;
-            StateHasChanged();
-
-            // przekierowanie na stronę zwierzaka
-            Navigation.NavigateTo($"/animal/{animal.Id}");
+            if(result != null)
+            {
+                IsSubmitting = false;
+                IsSubmitted = true;
+                showErrorMessage = false;
+                showSuccessMessage = true;
+                StateHasChanged();
+                await Task.Delay(3000);
+                // przekierowanie na stronę zwierzaka
+                Navigation.NavigateTo($"/");
+            }
+            else
+            {
+                IsSubmitting = false;
+                showErrorMessage = true;
+                showSuccessMessage = false;
+                StateHasChanged();
+                await Task.Delay(3000);
+                return;
+            }
         }
         catch (Exception)
         {
-            // handle exception
+            showErrorMessage = true;
+            showSuccessMessage = false;
+            StateHasChanged();
+            await Task.Delay(3000);
+            return;
         }
     }
 }

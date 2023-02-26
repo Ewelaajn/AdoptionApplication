@@ -1,8 +1,8 @@
 using AdoptionApplication.Server.Data;
 using AdoptionApplication.Server.Services.Animals;
 using AdoptionApplication.Server.Services.SpeciesService;
+using AdoptionApplication.Server.Services.AdoptionForm;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<ISpeciesService, SpeciesService>();
+builder.Services.AddScoped<IUserAdoptionFormService, UserAdoptionFormService>();
 builder.Services.AddDbContext<DataContext>(o => o.UseNpgsql(config.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
