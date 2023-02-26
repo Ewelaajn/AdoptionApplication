@@ -62,7 +62,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -77,7 +77,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -92,7 +92,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -107,7 +107,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -122,7 +122,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -137,7 +137,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -220,16 +220,16 @@ else
                 showSuccessMessage = false;
                 StateHasChanged();
                 await Task.Delay(3000);
-                return;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            throw (ex);
             internalError = true;
             StateHasChanged();
             await Task.Delay(3000);
             Navigation.NavigateTo("/");
-            return;
+            Console.WriteLine(ex.Message, ex.StackTrace);
         }
     }
 }

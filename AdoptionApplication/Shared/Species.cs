@@ -1,4 +1,6 @@
-﻿namespace AdoptionApplication.Shared
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AdoptionApplication.Shared
 {
     public class Species
     {

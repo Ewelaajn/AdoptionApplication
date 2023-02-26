@@ -1,0 +1,143 @@
+﻿@page "/animal/species"
+@inject ISpeciesService SpeciesService
+
+@if (showErrorMessage)
+{
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            @ErrorMessagesConstants.ValidationFailed
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
+    </div>
+}
+else if (internalError)
+{
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            @ErrorMessagesConstants.InternalError
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
+    </div>
+}
+else if (showErrorMessage)
+{
+    <div class="alert alert-success" role="alert">
+        Nowy gatunek został dodany!
+    </div>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h1 class="text-center">Dodaj nowy gatunek</h1>
+            <form>
+                <div class="form-group">
+                    <label for="Name">Nazwa:</label>
+                    <input type="text" class="form-control" id="Name" name="Name" @bind="@newSpecies.Name">
+                    @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+                    {
+                        <div class="invalid-feedback">
+                            @ErrorMessagesConstants.EmptyField
+                        </div>
+                        formValid = false;
+                    }
+                    else
+                    {
+                        formValid = true;
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="Url">Url:</label>
+                    <input type="text" class="form-control" id="Url" name="Url" @bind="@newSpecies.Url">
+                    @if (string.IsNullOrWhiteSpace(newSpecies.Url))
+                    {
+                        <div class="invalid-feedback">
+                            @ErrorMessagesConstants.EmptyField
+                        </div>
+                        formValid = false;
+                    }
+                    else
+                    {
+                        formValid = true;
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="Icon">Ikona:</label>
+                    <input type="text" class="form-control" id="Icon" name="Icon" @bind="@newSpecies.Icon">
+                    @if (string.IsNullOrWhiteSpace(newSpecies.Icon))
+                    {
+                        <div class="invalid-feedback">
+                            @ErrorMessagesConstants.EmptyField
+                        </div>
+                        formValid = false;
+                    }
+                    else
+                    {
+                        formValid = true;
+                    }
+                </div>
+                <div class="ml-auto">
+                    <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
+                        @ErrorMessagesConstants.ValidationFailed
+                    </div>
+                    <div class="alert alert-success d-none" @bind:hidden="@showErrorMessage" id="success-message">
+                        Formularz został wysłany
+                    </div>
+                    <button type="submit" class="btn btn-primary" disabled="@(!formValid)" @onclick="HandleSubmit">
+                        <span class="oi oi-plus"></span>
+                        Dodaj
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private Species newSpecies = new Species();
+    private bool formValid = true;
+    private bool showErrorMessage = false;
+    private bool showSuccessMessage = false;
+    private bool internalError = false;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            var result = await SpeciesService.UpsertSpecies(default, newSpecies);
+
+            if (result != null)
+            {
+                showErrorMessage = false;
+                showSuccessMessage = true;
+                StateHasChanged();
+                await Task.Delay(3000);
+                Navigation.NavigateTo("/");
+            }
+            else if (result == null)
+            {
+                showErrorMessage = true;
+                showSuccessMessage = false;
+                StateHasChanged();
+                await Task.Delay(3000);
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            internalError = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/");
+            return;
+        }
+    }
+}
