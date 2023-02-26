@@ -1,11 +1,12 @@
 ﻿@page "/"
 @page "/{speciesUrl}"
 @inject ISpeciesService SpeciesService
+@inject IAnimalService AnimalService
 
 @if(species != null)
 {
     <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
-    <AnimalsList SpeciesId="@species.Id" />
+    <AnimalsList />
 }   
 else
 {
@@ -19,8 +20,10 @@ else
 
     private Species species = null;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
+        await AnimalService.LoadAnimalsAsync(SpeciesUrl);
+
         if (SpeciesUrl != null)
             species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
         else

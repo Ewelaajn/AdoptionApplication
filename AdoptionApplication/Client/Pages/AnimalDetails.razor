@@ -1,49 +1,63 @@
-﻿@page "/animal/{id}"
+﻿@page "/animal/{id:int}"
 @inject IAnimalService AnimalService
 
-<div class="media">
-    <div class="media-img-big-wrapper mr-2">
-        <img class="media-img-big" src="@animal.Image" alt="@animal.Name" />
-    </div>
-    <div class="media-body">
-        <h2 class="mb-0" style="font-size: 2rem;">@animal.Name</h2>
-        <div class="text-info mb-0" style="font-size: 1.2rem;">Płeć: @animal.Gender</div>
-        <div class="text-info mb-2" style="font-size: 1.2rem;">Miasto: @animal.City</div>
-        <div class="animal-description" style="font-size: 1.2rem;">
-            @foreach (var line in animal.Description.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
+@if (animal != null)
+{
+    <div class="media">
+        <div class="media-img-big-wrapper mr-2">
+            <img class="media-img-big" src="@animal.Image" alt="@animal.Name" />
+        </div>
+        <div class="media-body">
+            <h2 class="mb-0" style="font-size: 2rem;">@animal.Name</h2>
+            <div class="text-info mb-0" style="font-size: 1.2rem;">Płeć: @animal.Gender</div>
+            <div class="text-info mb-2" style="font-size: 1.2rem;">Miasto: @animal.City</div>
+            <div class="animal-description" style="font-size: 1.2rem;">
+                @foreach (var line in animal.Description.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
+                {
+                        <div style="margin-bottom: 0.5rem;">@line</div>
+                }
+            </div>
+            @if (animal.HealthStatus == HealthStatusContants.Healthy)
             {
-                <div style="margin-bottom: 0.5rem;">@line</div>
+                    <div class="text-success mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
+            }
+            else
+            {
+                    <div class="text-danger mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
+            }
+            @if (animal.IsAdopted == false)
+            {
+                <head>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+                </head>
+                <button class="btn btn-primary btn-lg" style="font-size: 1.2rem;" @onclick="Adopt"><i class="fas fa-home"></i>&nbsp;&nbsp;Adoptuj</button>
             }
         </div>
-        @if (animal.HealthStatus == HealthStatusContants.Healthy)
-        {
-            <div class="text-success mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
-        }
-        else
-        {
-            <div class="text-danger mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
-        }
-        <head>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-        </head>
-        <button class="btn btn-primary btn-lg" style="font-size: 1.2rem;"><i class="fas fa-home"></i>&nbsp;&nbsp;Adoptuj</button>
     </div>
-</div>
+}
 
 
 @code {
     private Animal animal = null;
 
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
-    protected override void OnInitialized()
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        if (AnimalService.Animals == null || AnimalService.Animals.Count == 0)
-        {
-            AnimalService.LoadAnimals();
-        }
+        //if (AnimalService.Animals == null || AnimalService.Animals.Count == 0)
+        //{
+        //    AnimalService.LoadAnimalsAsync();
+        //}
 
-        animal = AnimalService.Animals.FirstOrDefault(x => x.Id == Int32.Parse(Id));
+        animal = await AnimalService.GetAnimalAsync(Id);
+    }
+    
+    private void Adopt()
+    {
+        NavigationManager.NavigateTo($"/animal/{animal.Id}/adoptionForm");
     }
 }

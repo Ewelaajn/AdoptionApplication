@@ -41,8 +41,8 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        SpeciesService.LoadSpecies();
+       await SpeciesService.LoadSpecies();
     }
 }

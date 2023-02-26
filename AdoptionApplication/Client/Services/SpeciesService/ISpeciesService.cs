@@ -6,6 +6,6 @@ namespace AdoptionApplication.Client.Services.SpeciesService
     {
         public ICollection<Species> Species { get; set; }
 
-        void LoadSpecies();
+        Task LoadSpecies();
     }
 }
