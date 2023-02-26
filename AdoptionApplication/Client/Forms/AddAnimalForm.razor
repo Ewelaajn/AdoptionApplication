@@ -1,0 +1,182 @@
+﻿@page "/animal/create"
+@inject ISpeciesService SpeciesService
+@inject IAnimalService AnimalService
+
+<div class="container">
+    <div class="card">
+  <div class="card-header">
+    <h1 class="text-center display-4">Dodaj nowe zwierzę</h1>
+  </div>
+ <div class="card-body">
+    <form class="form" @onsubmit="AddAnimal">
+        <div class="form-group">
+            <label for="name">Imię:</label>
+            <input type="text" class="form-control" id="name" @bind="@newAnimal.Name" required>
+            @if (string.IsNullOrWhiteSpace(newAnimal.Name))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="gender">Płeć:</label>
+            <select class="form-control" id="gender" @bind="@newAnimal.Gender">
+                @foreach (var gender in AnimalService.Genders)
+                {
+                    <option value="@gender">@gender</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="shortDescription">Krótki opis:</label>
+            <input type="text" class="form-control" id="shortDescription" @bind="@newAnimal.ShortDescription">
+            @if (string.IsNullOrWhiteSpace(newAnimal.ShortDescription))
+            {
+              <div class="invalid-feedback">
+                @ErrorMessagesConstants.EmptyField
+              </div>
+              formValid = false;
+            }
+            else
+            {
+              formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="description">Opis:</label>
+            <textarea class="form-control" id="description" @bind="@newAnimal.Description"></textarea>
+            @if (string.IsNullOrWhiteSpace(newAnimal.Description))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="healthStatus">Stan zdrowia:</label>
+            <select class="form-control" id="healthStatus" @bind="@newAnimal.HealthStatus">
+                @foreach (var status in AnimalService.HealthStatuses)
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="city">Miasto:</label>
+            <input type="text" class="form-control" id="city" @bind="@newAnimal.City">
+            @if (string.IsNullOrWhiteSpace(newAnimal.City))
+            {
+            <div class="invalid-feedback">
+                 @ErrorMessagesConstants.EmptyField
+            </div>
+            formValid = false;
+            }
+            else
+            {
+            formValid = true;
+            }
+        </div>
+        <div class="form-group">
+            <label for="province">Województwo:</label>
+            <input type="text" class="form-control" id="province" @bind="@newAnimal.Province">
+            @if (string.IsNullOrWhiteSpace(newAnimal.Province))
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+        <div class="form-group">
+         <label for="imageUrl">Url zdjęcia:</label>
+         <input type="text" class="form-control" id="imageUrl" @bind="@newAnimal.Image" required>
+         <img src="@newAnimal.Image" alt="Podgląd zdjęcia" style="max-width:300px; max-height:300px;" onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Placeholder';">
+         @if (string.IsNullOrWhiteSpace(newAnimal.Image))
+         {
+           <div class="invalid-feedback">
+             @ErrorMessagesConstants.EmptyField
+           </div>
+           formValid = false;
+         }
+         else
+         {
+           formValid = true;
+         }
+         </div>
+        <div class="form-group">
+            <label for="birthdate">Data urodzenia:</label>
+            <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.DateOfBirth" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+        </div>
+        <div class="form-group">
+            <label for="species">Gatunek:</label>
+            <select class="form-control" id="species" @bind="@newAnimal.SpeciesId">
+            @foreach (var species in SpeciesService.Species)
+            {
+                <option value="@species.Id">@species.Name</option>
+            }
+            </select>
+            @if (newAnimal.SpeciesId == null)
+            {
+                <div class="invalid-feedback">
+                    @ErrorMessagesConstants.EmptyField
+                </div>
+                formValid = false;
+            }
+            else
+            {
+                formValid = true;
+            }
+        </div>
+                <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
+                    <i class="fas fa-plus mr-2"></i> Dodaj
+                </button>
+
+            </form>
+    </div>
+</div>
+</div>
+
+@code {
+    public Animal newAnimal { get; set; } = new Animal();
+    private bool formValid = false;
+    protected override async Task OnInitializedAsync()
+    {
+        newAnimal = new Animal();
+        await SpeciesService.LoadSpecies();
+    }
+
+    //public void Dispose()
+    //{
+    //    AnimalService.OnChange -= StateHasChanged;
+    //}
+
+    private void AddAnimal()
+    {
+        if (formValid)
+        {
+            // utwórz nowy obiekt typu Animal i przypisz wartości zebrane z formularza
+            
+
+            // tutaj należy wywołać metodę, która zapisze obiekt do bazy danych lub innej formie trwałego przechowywania
+            
+
+            // zresetuj wartości pól formularza
+            newAnimal = new Animal();
+        }
+    }
+}

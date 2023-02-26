@@ -23,7 +23,7 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             if (!validation.IsValid)
                 return null;
 
-            var alreadyExists = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Email == newForm.Email && x.Animal == newForm.Animal);
+            var alreadyExists = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Email == newForm.Email && x.AnimalId == newForm.AnimalId);
             if (alreadyExists != null)
                 return newForm;
 
