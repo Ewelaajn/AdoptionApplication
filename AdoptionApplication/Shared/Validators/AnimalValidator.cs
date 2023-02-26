@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace AdoptionApplication.Shared.Validators
 {
-    internal class AnimalValidator
+    public class AnimalValidator : AbstractValidator<Animal>
     {
+        public AnimalValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Description).NotEmpty();
+            RuleFor(x => x.Gender).NotEmpty();
+            RuleFor(x => x.ShortDescription).NotEmpty();
+            RuleFor(x => x.HealthStatus).NotEmpty();
+            RuleFor(x => x.City).NotEmpty();
+            RuleFor(x => x.Province).NotEmpty();
+            RuleFor(x => x.Image).NotEmpty();
+            RuleFor(x => x.DateOfBirth).NotEmpty();
+            RuleFor(x => x.SpeciesId).NotEmpty();
+        }
     }
 }

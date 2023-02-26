@@ -3,6 +3,9 @@ using AdoptionApplication.Server.Services.Animals;
 using AdoptionApplication.Server.Services.SpeciesService;
 using AdoptionApplication.Server.Services.AdoptionForm;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<ISpeciesService, SpeciesService>();
 builder.Services.AddScoped<IUserAdoptionFormService, UserAdoptionFormService>();
+builder.Services.AddScoped<IValidator<Animal>, AnimalValidator>();
+builder.Services.AddScoped<IValidator<Species>, SpeciesValidator>();
+builder.Services.AddScoped<IValidator<UserAdoptionForm>, UserAdoptionFormValidator>();
+
 builder.Services.AddDbContext<DataContext>(o => o.UseNpgsql(config.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
