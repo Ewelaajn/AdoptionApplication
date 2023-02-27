@@ -1,4 +1,5 @@
 ﻿using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.Constants;
 using System.Net.Http.Json;
 
 namespace AdoptionApplication.Client.Services.AnimalService
@@ -13,6 +14,8 @@ namespace AdoptionApplication.Client.Services.AnimalService
         }
 
         public ICollection<Animal> Animals { get ; set; } = new List<Animal>();
+        public List<string> HealthStatuses { get; set; } = new List<string> { HealthStatusContants.Healthy, HealthStatusContants.Unhealthy};
+        public List<string> Genders { get; set; } = new List<string> { GenderContants.Male, GenderContants.Female, GenderContants.Undefined };
 
         public event Action OnChange;
 

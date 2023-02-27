@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdoptionApplication.Server.Services.AdoptionForm
@@ -8,16 +9,24 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
     public class UserAdoptionFormService : IUserAdoptionFormService
     {
         private readonly DataContext _dataContext;
+        private readonly IValidator<UserAdoptionForm> _validator;
 
-        public UserAdoptionFormService(DataContext dataContext)
+        public UserAdoptionFormService(DataContext dataContext, IValidator<UserAdoptionForm> validator)
         {
             _dataContext = dataContext;
+            _validator = validator;
         }
 
         public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm newForm)
         {
-            if (newForm == null || newForm.Age == null)
+            var validation = _validator.Validate(newForm);
+            if (!validation.IsValid)
                 return null;
+
+            var alreadyExists = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Email == newForm.Email && x.AnimalId == newForm.AnimalId);
+            if (alreadyExists != null)
+                return newForm;
+
             newForm.Deleted = false;
             newForm.Status = AdoptionFormStatusConstants.New;
             _dataContext.AdoptionForms.Add(newForm);

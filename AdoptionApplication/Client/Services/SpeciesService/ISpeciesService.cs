@@ -7,5 +7,6 @@ namespace AdoptionApplication.Client.Services.SpeciesService
         public ICollection<Species> Species { get; set; }
 
         Task LoadSpecies();
+        Task<Species> UpsertSpecies(Species species);
     }
 }

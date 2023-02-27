@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace AdoptionApplication.Shared.Validators
 {
-    internal class UserAdoptionFormValidator
+    public class UserAdoptionFormValidator : AbstractValidator<UserAdoptionForm>
     {
+        public UserAdoptionFormValidator()
+        {
+            RuleFor(x => x.AnimalId).NotNull().NotEmpty();
+            RuleFor(x => x.FirstName).NotEmpty();
+            RuleFor(x => x.LastName).NotEmpty();
+            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.PhoneNumber).NotEmpty();
+            RuleFor(x => x.Age).NotEmpty();
+            RuleFor(x => x.AboutMe).NotEmpty();
+        }
     }
 }

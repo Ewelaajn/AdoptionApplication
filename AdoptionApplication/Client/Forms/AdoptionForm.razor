@@ -23,7 +23,18 @@ else
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
-            Coś poszło nie tak, spróbuj ponownie.
+            @ErrorMessagesConstants.ValidationFailed
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
+    </div>
+}
+else if (internalError)
+{
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            @ErrorMessagesConstants.InternalError
         </div>
         <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
             <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
@@ -51,7 +62,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -66,7 +77,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -81,7 +92,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -96,7 +107,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -111,7 +122,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -126,7 +137,7 @@ else
             @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
             {
                 <div class="invalid-feedback">
-                    To pole nie może być puste.
+                    @ErrorMessagesConstants.EmptyField
                 </div>
                 formValid = false;
             }
@@ -137,12 +148,12 @@ else
         </div>
         <div class="ml-auto">
             <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
-                Coś poszło nie tak, spróbuj ponownie
+                @ErrorMessagesConstants.ValidationFailed
             </div>
             <div class="alert alert-success d-none" @bind:hidden="@showErrorMessage" id="success-message">
                 Formularz został wysłany
             </div>
-            <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+            <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
         </div>
     </form>
 }
@@ -153,6 +164,9 @@ else
     private bool formValid = true;
     private bool showErrorMessage = false;
     private bool showSuccessMessage = false;
+    private bool internalError = false;
+    private bool IsSubmitting = false;
+    private bool IsSubmitted = false;
 
     [Parameter]
     public int Id { get; set; }
@@ -170,12 +184,12 @@ else
         }
         else
         {
-            //handle error
+            internalError = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/");
         }
     }
-
-    private bool IsSubmitting = false;
-    private bool IsSubmitted = false;
 
     private async Task HandleSubmit()
     {
@@ -187,7 +201,6 @@ else
             IsSubmitting = true;
             StateHasChanged();
 
-            // Tu możesz dodać kod zapisujący dane formularza w bazie danych
             var result = await AdoptionFormService.AddNewForm(adoptionForm);
 
             if(result != null)
@@ -198,26 +211,24 @@ else
                 showSuccessMessage = true;
                 StateHasChanged();
                 await Task.Delay(3000);
-                // przekierowanie na stronę zwierzaka
-                Navigation.NavigateTo($"/");
+                Navigation.NavigateTo("/");
             }
-            else
+            else if (result == null)
             {
                 IsSubmitting = false;
                 showErrorMessage = true;
                 showSuccessMessage = false;
                 StateHasChanged();
                 await Task.Delay(3000);
-                return;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            showErrorMessage = true;
-            showSuccessMessage = false;
+            throw (ex);
+            internalError = true;
             StateHasChanged();
             await Task.Delay(3000);
-            return;
+            Navigation.NavigateTo("/");
         }
     }
 }

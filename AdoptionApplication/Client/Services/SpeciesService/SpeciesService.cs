@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Shared;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace AdoptionApplication.Client.Services.SpeciesService
 {
@@ -17,6 +18,19 @@ namespace AdoptionApplication.Client.Services.SpeciesService
         public async Task LoadSpecies()
         {
             Species = await _httpClient.GetFromJsonAsync<ICollection<Species>>("api/Species");
+        }
+
+        public async Task<Species> UpsertSpecies(Species species)
+        {
+            var result = await _httpClient.PutAsJsonAsync("api/Species", species);
+
+            if (!result.IsSuccessStatusCode)
+                return null;
+            else
+            {
+                var speciesResult = await JsonSerializer.DeserializeAsync<Species>(await result.Content.ReadAsStreamAsync());
+                return speciesResult;
+            }
         }
     }
 }

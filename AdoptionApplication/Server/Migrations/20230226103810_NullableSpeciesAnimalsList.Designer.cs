@@ -3,6 +3,7 @@ using System;
 using AdoptionApplication.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AdoptionApplication.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230226103810_NullableSpeciesAnimalsList")]
+    partial class NullableSpeciesAnimalsList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +47,7 @@ namespace AdoptionApplication.Server.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool?>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -147,9 +147,7 @@ namespace AdoptionApplication.Server.Migrations
                         .HasDefaultValueSql("CURRENT_DATE");
 
                     b.Property<bool?>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Icon")
                         .HasColumnType("text");
@@ -214,9 +212,7 @@ namespace AdoptionApplication.Server.Migrations
                         .HasDefaultValueSql("CURRENT_DATE");
 
                     b.Property<bool?>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");

@@ -23,8 +23,20 @@ namespace AdoptionApplication.Server.Controllers
             return Ok(species);
         }
 
-        /*[HttpPost]
         [HttpPut]
+        public async Task<ActionResult<Species>> UpsertSpecies([FromBody] Species species)
+        {
+            try
+            {
+                var result = await _speciesService.UpsertNewSpecies(species);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest($"{ex.Message}, {ex.StackTrace}");
+            }
+        }
+        /*[HttpPut]
         [HttpDelete]*/
     }
 }
