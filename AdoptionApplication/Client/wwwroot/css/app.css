@@ -1,5 +1,31 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.card-header {
+    background: linear-gradient(to bottom right, #f2f2f2, #d9d9d9);
+    color: #333;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    font-family: "Segoe UI", sans-serif;
+    font-size: 2.5rem;
+    border-bottom: none;
+}
+
+.btn-custom {
+    background-image: linear-gradient(to bottom right, #6c757d, #222);
+    color: #fff;
+    border: none;
+    box-shadow: 2px 2px 5px #888888;
+}
+
+.btn-custom:hover {
+    background-image: linear-gradient(to bottom right, #222, #6c757d);
+    color: #fff;
+}
+
+.btn-custom:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 select.bg-white {
     background-color: #fff;
 }
