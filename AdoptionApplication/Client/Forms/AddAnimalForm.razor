@@ -1,11 +1,57 @@
 ﻿@page "/animal/create"
+@page "/animal/update/{id}"
 @inject ISpeciesService SpeciesService
 @inject IAnimalService AnimalService
 
+@if (showErrorMessage)
+{
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            @ErrorMessagesConstants.ValidationFailed
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
+    </div>
+}
+else if (internalError)
+{
+    <div class="d-flex flex-column align-items-start">
+        <div class="alert alert-danger mb-3 p-2 text-center">
+            @ErrorMessagesConstants.InternalError
+        </div>
+        <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
+            <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
+        </button>
+    </div>
+}
+else if (showSuccessMessage)
+{
+    
+        @if(newAnimal.Id > 0)
+        {
+            <div class="alert alert-success" role="alert">
+            Nowe zwierzę do adopcji zostało dodane!
+            </div>
+        }
+        else
+        {
+        <div class="alert alert-success" role="alert">
+            Zaktualizowano informacje o @newAnimal.Name
+        </div>
+        }
+}
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h1 class="text-center display-4">Dodaj nowe zwierzę</h1>
+            @if (string.IsNullOrWhiteSpace(@Id))
+            {
+                <h1 class="text-center display-4">Dodaj nowe zwierzę</h1>
+            }
+            else
+            {
+                <h1 class="text-center display-4">Aktualizuj informacje</h1>
+            }
         </div>
         <div class="card-body">
             <form class="form" @onsubmit="AddAnimal">
@@ -123,6 +169,10 @@
                     <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.DateOfBirth" max="@DateTime.Today.ToString("yyyy-MM-dd")">
                 </div>
                 <div class="form-group">
+                    <label for="birthdate">Data adopcji:</label>
+                    <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.AdoptionDate" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                </div>
+                <div class="form-group">
                     <label for="species">Gatunek:</label>
                     <select class="form-control" id="species" @bind="@newAnimal.SpeciesId">
                         @foreach (var species in SpeciesService.Species)
@@ -142,9 +192,28 @@
                         formValid = true;
                     }
                 </div>
-                <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
-                    <i class="fas fa-plus mr-2"></i> Dodaj
-                </button>
+                <div>
+                    <label>
+                        <input type="radio" name="adoption-status" checked="@(!newAnimal.IsAdopted)" @onchange="@(e => newAnimal.IsAdopted = false)">
+                        Do adopcji
+                    </label>
+                    <label>
+                        <input type="radio" name="adoption-status" checked="@newAnimal.IsAdopted" @onchange="@(e => newAnimal.IsAdopted = true)">
+                        Adoptowany
+                    </label>
+                </div>
+                @if (string.IsNullOrWhiteSpace(@Id))
+                {
+                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
+                        <i class="fas fa-plus mr-2"></i> Dodaj
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
+                        <i class="fas fa-plus mr-2"></i> Aktualizuj
+                    </button>
+                }
             </form>
         </div>
     </div>
@@ -154,29 +223,53 @@
 @code {
     public Animal newAnimal { get; set; } = new Animal();
     private bool formValid = true;
+    private bool showErrorMessage = false;
+    private bool showSuccessMessage = false;
+    private bool internalError = false;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        newAnimal = new Animal();
         await SpeciesService.LoadSpecies();
+
+        if(string.IsNullOrWhiteSpace(Id))
+        {
+            newAnimal = new Animal();
+        }
+        else
+        {
+            newAnimal = await AnimalService.GetAnimalAsync(Int32.Parse(Id));
+        }
     }
 
-    //public void Dispose()
-    //{
-    //    AnimalService.OnChange -= StateHasChanged;
-    //}
-
-    private void AddAnimal()
+    private async Task AddAnimal()
     {
         if (formValid)
         {
-            // utwórz nowy obiekt typu Animal i przypisz wartości zebrane z formularza
-            
+            StateHasChanged();
+            var result = await AnimalService.AddNewAnimal(newAnimal);
 
-            // tutaj należy wywołać metodę, która zapisze obiekt do bazy danych lub innej formie trwałego przechowywania
-            
-
-            // zresetuj wartości pól formularza
-            newAnimal = new Animal();
+            if (result != null)
+            {
+                showErrorMessage = false;
+                showSuccessMessage = true;
+                StateHasChanged();
+                await Task.Delay(3000);
+                Navigation.NavigateTo("/");
+            }
+            else if (result == null)
+            {
+                showErrorMessage = true;
+                showSuccessMessage = false;
+                StateHasChanged();
+                await Task.Delay(3000);
+                Navigation.NavigateTo("/");
+            }
         }
     }
 }

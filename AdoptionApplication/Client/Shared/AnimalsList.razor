@@ -1,35 +1,35 @@
 ﻿@inject IAnimalService AnimalService
 @implements IDisposable
 
-<ul class="list-unstyled">
+<ul class="list-unstyled custom-list">
     @foreach (var animal in AnimalService.Animals)
     {
-       <li class="media my-3">
-           <div class="media-img-wrapper mr-2">
-               <a href="/animal/@animal.Id">
-                   <img class="media-img" src="@animal.Image" alt="@animal.Name" />
-               </a>
-           </div>
-           <div class="media-body">
-               <a href="/animal/@animal.Id">
-                   <h4 class="mb-0">@animal.Name</h4>
-               </a>
-               <div class="text-info">Płeć: @animal.Gender</div>
-               <div class="text-info">Miasto: @animal.City</div>
-               <div class="text-info">Krótki opis: @animal.ShortDescription</div>
-               @if(animal.HealthStatus == HealthStatusContants.Healthy)
-               {
-                   <div class="text-success">@animal.HealthStatus</div>
-               }
-               else
-               {
-                   <div class="text-danger">@animal.HealthStatus</div>
-               }
-               @if (animal.IsAdopted == true)
+        <li class="media my-3 custom-media">
+            <div class="media-img-wrapper mr-2 custom-media-img-wrapper">
+                <a href="/animal/@animal.Id">
+                    <img class="media-img custom-media-img" src="@animal.Image" alt="@animal.Name" />
+                </a>
+            </div>
+            <div class="media-body custom-media-body">
+                <a href="/animal/@animal.Id">
+                    <h4 class="mb-0 custom-h4">@animal.Name</h4>
+                </a>
+                <div class="text-info custom-text-info">Płeć: @animal.Gender</div>
+                <div class="text-info custom-text-info">Miasto: @animal.City</div>
+                <div class="text-info custom-text-info">Krótki opis: @animal.ShortDescription</div>
+                @if (animal.HealthStatus == HealthStatusContants.Healthy)
+                {
+                    <div class="text-success custom-text-success">@animal.HealthStatus</div>
+                }
+                else
+                {
+                    <div class="text-danger custom-text-danger">@animal.HealthStatus</div>
+                }
+                @if (animal.IsAdopted == true)
                 {
                     @if (animal.Gender == GenderContants.Female)
                     {
-                        <div class="badge badge-success mb-2">
+                        <div class="badge badge-success mb-2 custom-badge">
                             <head>
                                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
                             </head>
@@ -38,7 +38,7 @@
                     }
                     else
                     {
-                        <div class="badge badge-success mb-2">
+                        <div class="badge badge-success mb-2 custom-badge">
                             <head>
                                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
                             </head>
@@ -48,18 +48,18 @@
                 }
                 else
                 {
-                    <div class="badge badge-danger mb-2">
+                    <div class="badge badge-danger mb-2 custom-badge">
                         <head>
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
                         </head>
                         <i class="fas fa-times"></i> @($"{AdoptionStatusConstants.ToAdopt}")
                     </div>
                 }
-
-           </div>
-       </li> 
+            </div>
+        </li>
     }
 </ul>
+
 
 @code {
     //[Parameter]

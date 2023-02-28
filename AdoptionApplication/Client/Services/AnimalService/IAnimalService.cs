@@ -10,5 +10,6 @@ namespace AdoptionApplication.Client.Services.AnimalService
         public List<string> Genders { get; set; }
         Task LoadAnimalsAsync(string speciesUrl = null);
         Task<Animal> GetAnimalAsync(int id);
+        Task<Animal> AddNewAnimal(Animal newAnimal);
     }
 }
