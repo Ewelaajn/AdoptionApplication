@@ -2,6 +2,7 @@
 @page "/animal/update/{id}"
 @inject ISpeciesService SpeciesService
 @inject IAnimalService AnimalService
+@inject IToastService ToastService
 
 @if (showErrorMessage)
 {
@@ -239,7 +240,11 @@ else if (showSuccessMessage)
 
         if(string.IsNullOrWhiteSpace(Id))
         {
-            newAnimal = new Animal();
+            newAnimal = new Animal
+            {
+                Gender = GenderContants.Undefined,
+                HealthStatus = HealthStatusContants.Healthy
+            };
         }
         else
         {
@@ -259,7 +264,8 @@ else if (showSuccessMessage)
                 showErrorMessage = false;
                 showSuccessMessage = true;
                 StateHasChanged();
-                await Task.Delay(3000);
+                await Task.Delay(2000);
+                ToastService.ShowSuccess("Pomyślnie dodano nowego zwierzaka!");
                 Navigation.NavigateTo("/");
             }
             else if (result == null)
@@ -267,7 +273,8 @@ else if (showSuccessMessage)
                 showErrorMessage = true;
                 showSuccessMessage = false;
                 StateHasChanged();
-                await Task.Delay(3000);
+                await Task.Delay(2000);
+                ToastService.ShowError("Nie udało się dodać nowego zwierzaka. Spróbuj ponownie.");
                 Navigation.NavigateTo("/");
             }
         }

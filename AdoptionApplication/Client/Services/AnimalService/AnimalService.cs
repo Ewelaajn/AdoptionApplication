@@ -17,9 +17,7 @@ namespace AdoptionApplication.Client.Services.AnimalService
         public ICollection<Animal> Animals { get ; set; } = new List<Animal>();
         public List<string> HealthStatuses { get; set; } = new List<string> { HealthStatusContants.Healthy, HealthStatusContants.Unhealthy};
         public List<string> Genders { get; set; } = new List<string> { GenderContants.Male, GenderContants.Female, GenderContants.Undefined };
-
         public event Action OnChange;
-
         public async Task<Animal> AddNewAnimal(Animal newAnimal)
         {
             var result = await _httpClient.PutAsJsonAsync("api/Animal", newAnimal);
@@ -42,7 +40,6 @@ namespace AdoptionApplication.Client.Services.AnimalService
                 Animals = await _httpClient.GetFromJsonAsync<ICollection<Animal>>($"api/Animal");
             else
                 Animals = await _httpClient.GetFromJsonAsync<ICollection<Animal>>($"api/Animal/Species/{speciesUrl}");
-
             OnChange.Invoke();
         }
     }

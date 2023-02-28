@@ -5,12 +5,16 @@
 
 @if(species != null)
 {
-    <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
+    </div>
     <AnimalsList />
 }   
 else
 {
-    <h1>Zapoznaj się ze zwierzakami, które szukają domu!</h1>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <h1>Zapoznaj się ze zwierzętami, które szukają domu!!</h1>
+    </div>
     <AnimalsList />
 }
 

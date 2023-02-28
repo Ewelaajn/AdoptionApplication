@@ -1,5 +1,27 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.form-group {
+    flex-grow: 1;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.form-group button {
+    width: 100%;
+}
+
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+
 .adoption-status {
     display: flex;
     flex-direction: row;
