@@ -2,6 +2,8 @@ using AdoptionApplication.Client;
 using AdoptionApplication.Client.Services.AdoptionFormService;
 using AdoptionApplication.Client.Services.AnimalService;
 using AdoptionApplication.Client.Services.SpeciesService;
+using Blazored.Modal;
+using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -16,6 +18,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<ISpeciesService, SpeciesService>();
 builder.Services.AddScoped<IAdoptionFormService, AdoptionFormService>();
+builder.Services.AddBlazoredModal();
+builder.Services.AddBlazoredToast();
 
 builder.Services
     .AddBlazorise(options =>

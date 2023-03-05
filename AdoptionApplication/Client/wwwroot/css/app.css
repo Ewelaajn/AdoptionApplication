@@ -1,5 +1,106 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.form-group {
+    flex-grow: 1;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.form-group button {
+    width: 100%;
+}
+
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+
+.adoption-status {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.adoption-status-label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+.adoption-status-label input[type="radio"] {
+    margin-right: 5px;
+}
+
+.custom-list {
+    background-color: #f3f3f3;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.custom-media {
+    box-shadow: 2px 2px 10px #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.custom-text-success {
+    font-size: 1.5rem;
+    color: #2ecc71;
+    text-shadow: 1px 1px #fff;
+    font-weight: bold;
+}
+
+.custom-media-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.custom-h4 {
+    margin-top: 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+.custom-text-info {
+    font-size: 1.2rem;
+    color: #666;
+}
+.card-header {
+    background: linear-gradient(to bottom right, #f2f2f2, #d9d9d9);
+    color: #333;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    font-family: "Segoe UI", sans-serif;
+    font-size: 2.5rem;
+    border-bottom: none;
+}
+
+.btn-custom {
+    background-image: linear-gradient(to bottom right, #6c757d, #222);
+    color: #fff;
+    border: none;
+    box-shadow: 2px 2px 5px #888888;
+}
+
+.btn-custom:hover {
+    background-image: linear-gradient(to bottom right, #222, #6c757d);
+    color: #fff;
+}
+
+.btn-custom:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 select.bg-white {
     background-color: #fff;
 }
@@ -164,7 +265,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
+.btn-link {
     color: #0366d6;
 }
 

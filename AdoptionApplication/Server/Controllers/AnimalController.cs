@@ -37,6 +37,20 @@ namespace AdoptionApplication.Server.Controllers
             var animal = await _animalService.GetAnimalByIdAsync(id);
             return Ok(animal);
         }
+
+        [HttpPut]
+        public async Task<ActionResult<Animal>> UpsertAnimal([FromBody] Animal animal)
+        {
+            try
+            {
+                var result = await _animalService.UpsertAnimalAsync(animal);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}, {ex.StackTrace}");
+            }
+        }
         /*[HttpPost]
         [HttpPut]
         [HttpDelete]*/

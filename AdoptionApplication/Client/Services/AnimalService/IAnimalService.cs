@@ -11,5 +11,6 @@ namespace AdoptionApplication.Client.Services.AnimalService
         Task<int> LoadAnimalsAsync(int? page, string speciesUrl = null);
         Task<int> LoadAnimalsAsyncForAll(int? page);
         Task<Animal> GetAnimalAsync(int id);
+        Task<Animal> AddNewAnimal(Animal newAnimal);
     }
 }

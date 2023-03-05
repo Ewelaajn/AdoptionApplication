@@ -3,37 +3,47 @@
 
 @if (animal != null)
 {
-    <div class="media">
-        <div class="media-img-big-wrapper mr-2">
-            <img class="media-img-big" src="@animal.Image" alt="@animal.Name" />
-        </div>
-        <div class="media-body">
-            <h2 class="mb-0" style="font-size: 2rem;">@animal.Name</h2>
-            <div class="text-info mb-0" style="font-size: 1.2rem;">Płeć: @animal.Gender</div>
-            <div class="text-info mb-2" style="font-size: 1.2rem;">Miasto: @animal.City</div>
-            <div class="animal-description" style="font-size: 1.2rem;">
-                @foreach (var line in animal.Description.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
-                {
-                        <div style="margin-bottom: 0.5rem;">@line</div>
-                }
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <img class="card-img-top rounded-circle shadow" src="@animal.Image" alt="@animal.Name" />
+                </div>
+                <div class="col-md-8">
+                    <h2 class="card-title mb-0" style="font-size: 2.5rem;">@animal.Name</h2>
+                    <div class="card-text mb-3" style="font-size: 1.2rem;"><small class="text-muted">Płeć:</small> @animal.Gender</div>
+                    <div class="card-text mb-3" style="font-size: 1.2rem;"><small class="text-muted">Wiek:</small> @CalculateAge(animal.DateOfBirth.Value)</div>
+                    <div class="card-text mb-3" style="font-size: 1.2rem;"><small class="text-muted">Miasto:</small> @animal.City</div>
+                    <div class="card-text mb-3" style="font-size: 1.2rem;">
+                        @foreach (var line in animal.Description.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
+                        {
+                            <p>@line</p>
+                        }
+                    </div>
+                    @if (animal.HealthStatus == HealthStatusContants.Healthy)
+                    {
+                        <div class="card-text mb-3" style="font-size: 1.2rem;"><small class="text-muted">Stan zdrowia:</small> <span class="text-success">@animal.HealthStatus</span></div>
+                    }
+                    else
+                    {
+                        <div class="card-text mb-3" style="font-size: 1.2rem;"><small class="text-muted">Stan zdrowia:</small> <span class="text-danger">@animal.HealthStatus</span></div>
+                    }
+                    @if (animal.IsAdopted == false)
+                    {
+                        <head>
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+                        </head>
+                        <button class="btn btn-lg btn-success" style="font-size: 1.2rem;" @onclick="Adopt"><i class="fas fa-home mr-2"></i>Adoptuj</button>
+                    }
+                    else
+                    {
+                        <div class="card-text" style="font-size: 1.2rem;"><small class="text-muted">Data adopcji:</small> @animal.AdoptionDate.Value.ToString("yyyy-MM-dd")</div>
+                    }
+                </div>
             </div>
-            @if (animal.HealthStatus == HealthStatusContants.Healthy)
-            {
-                    <div class="text-success mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
-            }
-            else
-            {
-                    <div class="text-danger mb-2" style="font-size: 1.2rem;">@animal.HealthStatus</div>
-            }
-            @if (animal.IsAdopted == false)
-            {
-                <head>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-                </head>
-                <button class="btn btn-primary btn-lg" style="font-size: 1.2rem;" @onclick="Adopt"><i class="fas fa-home"></i>&nbsp;&nbsp;Adoptuj</button>
-            }
         </div>
     </div>
+
 }
 
 
@@ -55,9 +65,25 @@
 
         animal = await AnimalService.GetAnimalAsync(Id);
     }
-    
+
     private void Adopt()
     {
         NavigationManager.NavigateTo($"/animal/{animal.Id}/adoptionForm");
+    }
+
+    private int CalculateAge(DateTime? birthDate)
+    {
+        // Obliczanie wieku na podstawie daty urodzenia
+        if(birthDate != null)
+        {
+            DateTime now = DateTime.Now;
+            int age = now.Year - birthDate.Value.Year;
+            if (now.Month < birthDate.Value.Month || (now.Month == birthDate.Value.Month && now.Day < birthDate.Value.Day))
+            {
+                age--;
+            }
+            return age;
+        }
+        return 0;
     }
 }
