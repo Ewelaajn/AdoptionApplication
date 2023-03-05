@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using AdoptionApplication.Shared.DTO;
 using System.Net.Http.Json;
 
 namespace AdoptionApplication.Client.Services.AnimalService
@@ -22,14 +23,30 @@ namespace AdoptionApplication.Client.Services.AnimalService
         public async Task<Animal> GetAnimalAsync(int id)
         => await _httpClient.GetFromJsonAsync<Animal>($"api/Animal/{id}");
 
-        public async Task LoadAnimalsAsync(string speciesUrl = null)
+        public async Task<int> LoadAnimalsAsync(int? page, string speciesUrl = null)
         {
+            BatchAnimal result;
             if (string.IsNullOrEmpty(speciesUrl))
-                Animals = await _httpClient.GetFromJsonAsync<ICollection<Animal>>($"api/Animal");
+            {
+                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}");
+                Animals = result.Animals;
+            }
             else
-                Animals = await _httpClient.GetFromJsonAsync<ICollection<Animal>>($"api/Animal/Species/{speciesUrl}");
-
+            {
+                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal/Species/{speciesUrl}?page={page}");
+                Animals = result.Animals;
+            }
+                
             OnChange.Invoke();
+            return result.Total;
+        }
+
+        public async Task<int> LoadAnimalsAsyncForAll(int? page)
+        {
+            var result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}");
+            Animals = result.Animals;
+            
+            return result.Total;
         }
     }
 }

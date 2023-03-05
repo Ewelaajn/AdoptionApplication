@@ -1,4 +1,6 @@
-﻿namespace AdoptionApplication.Shared
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AdoptionApplication.Shared
 {
     public class Animal
     {

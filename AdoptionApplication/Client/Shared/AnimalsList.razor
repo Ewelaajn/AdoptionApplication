@@ -1,6 +1,17 @@
 ﻿@inject IAnimalService AnimalService
 @implements IDisposable
 
+@if (AnimalService.Animals == null)
+{
+    <p>Trwa ładowanie...</p>
+}
+else if (AnimalService.Animals.Count == 0)
+{
+    <p>
+        Wszystkie zwierzaki zostały adoptowane!
+        Zajrzyj do nas za jakiś czas.
+    </p>
+}
 <ul class="list-unstyled">
     @foreach (var animal in AnimalService.Animals)
     {
