@@ -103,6 +103,9 @@ else
         }
     }
 
-    private void SetActive(string page)
-        => currentPage = page;
+    private async Task SetActive(string page)
+    {
+        currentPage = page;
+        await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+    }
 }
