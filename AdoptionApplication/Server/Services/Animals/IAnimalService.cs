@@ -8,5 +8,6 @@ namespace AdoptionApplication.Server.Services.Animals
         Task<ICollection<Animal>> GetAnimalsAsync();
         Task<ICollection<Animal>> GetAnimalsBySpeciesAsync(string speciesUrl);
         Task<Animal> GetAnimalByIdAsync(int id);
+        Task<Animal> UpsertAnimalAsync(Animal animal);
     }
 }

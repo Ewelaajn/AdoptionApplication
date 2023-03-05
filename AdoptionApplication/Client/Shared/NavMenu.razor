@@ -1,4 +1,8 @@
 ﻿@inject ISpeciesService SpeciesService
+@inject IToastService ToastService
+@using Blazored.Toast.Configuration
+@using Blazored.Modal
+@using Blazored.Modal.Services
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -29,7 +33,7 @@
             </li>
         }
         <li class="nav-item">
-            <a class="nav-link" href="animal/species">
+            <a class="nav-link" @onclick="ShowModal" style="cursor: pointer;">
                 <head>
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
                 </head>
@@ -39,11 +43,11 @@
     </ul>
 </div>
 
-
 @code {
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     private void ToggleNavMenu()
     {
@@ -52,6 +56,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-       await SpeciesService.LoadSpecies();
+        await SpeciesService.LoadSpecies();
+    }
+
+    private async Task ShowModal()
+    {
+        var moviesModal = Modal.Show<SpeciesForm>();
+        var result = await moviesModal.Result;
+
+        if(result.Data != null)
+        {
+            ToastService.ShowSuccess($"Dodano nowy gatunek {result.Data}");
+        }
     }
 }

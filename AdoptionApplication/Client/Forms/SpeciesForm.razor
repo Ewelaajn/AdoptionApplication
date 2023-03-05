@@ -31,65 +31,61 @@ else if (showSuccessMessage)
 }
 else
 {
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h1 class="text-center display-4">Dodaj nowy gatunek zwierzęcia</h1>
-        </div>
-        <div class="card-body">
-            <form class="form" @onsubmit="AddSpecies">
-                <div class="form-group">
-                    <label for="nazwa">Nazwa:</label>
-                    <input type="text" class="form-control" id="nazwa" @bind="@newSpecies.Name" required>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Name))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
-                </div>
-                <div class="form-group">
-                    <label for="url">Url:</label>
-                    <input type="text" class="form-control" id="url" @bind="@newSpecies.Url" required>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Url))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
-                </div>
-                <div class="form-group">
-                    <label for="ikona">Ikona:</label>
-                    <input type="text" class="form-control" id="ikona" @bind="@newSpecies.Icon" required>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Icon))
-                    {
-                        <div class="invalid-feedback">
-                            @ErrorMessagesConstants.EmptyField
-                        </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
-                    }
-                </div>
-                <button type="submit" class="btn btn-primary" disabled="@(!formValid)">
-                    <span class="oi oi-plus"></span> Dodaj
-                </button>
-            </form>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="text-center display-4" style="font-family: Arial, sans-serif; font-size: 2.5rem; color: #555;">Dodaj nowy gatunek zwierzęcia</h1>
+            </div>
+            <div class="card-body">
+                <form class="form" @onsubmit="AddSpecies">
+                    <div class="form-group">
+                        <label for="nazwa">Nazwa:</label>
+                        <input type="text" class="form-control form-control-lg" id="nazwa" @bind="@newSpecies.Name" required />
+                        @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+                        {
+                            <div class="invalid-feedback">
+                                @ErrorMessagesConstants.EmptyField
+                            </div>
+                            formValid = false;
+                        }
+                        else { formValid = true; }
+                    </div>
+                    <div class="form-group">
+                        <label for="url">Url:</label>
+                        <input type="text" class="form-control form-control-lg" id="url" @bind="@newSpecies.Url" required />
+                        @if (string.IsNullOrWhiteSpace(newSpecies.Url))
+                        {
+                            <div class="invalid-feedback">
+                                @ErrorMessagesConstants.EmptyField
+                            </div>
+                            formValid = false;
+                        }
+                        else { formValid = true; }
+                    </div>
+                    <div class="form-group">
+                        <label for="ikona">Ikona:</label>
+                        <input type="text" class="form-control form-control-lg" id="ikona" @bind="@newSpecies.Icon" required />
+                        @if (string.IsNullOrWhiteSpace(newSpecies.Icon))
+                        {
+                            <div class="invalid-feedback">
+                                @ErrorMessagesConstants.EmptyField
+                            </div>
+                            formValid = false;
+                        }
+                        else { formValid = true; }
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
+                            <span class="oi oi-plus"></span> Dodaj
+                        </button>
+                        <button type="button" class="btn btn-custom ml-2" @onclick="Cancel">
+                            <i class="fas fa-times"></i> Anuluj
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 }
 
 @code {
@@ -101,6 +97,9 @@ else
 
     [Inject]
     public NavigationManager Navigation { get; set; }
+
+    [CascadingParameter] 
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +115,7 @@ else
             {
                 showErrorMessage = false;
                 showSuccessMessage = true;
+                await BlazoredModal.CloseAsync(ModalResult.Ok(newSpecies.Name));
                 StateHasChanged();
                 await Task.Delay(3000);
                 Navigation.NavigateTo("/");
@@ -127,6 +127,7 @@ else
                 StateHasChanged();
                 await Task.Delay(3000);
                 Navigation.NavigateTo("/");
+                await BlazoredModal.CancelAsync();
             }
         }
         catch (Exception)
@@ -135,6 +136,9 @@ else
             StateHasChanged();
             await Task.Delay(3000);
             Navigation.NavigateTo("/");
+            await BlazoredModal.CancelAsync();
         }
    }
+
+    private async Task Cancel() => await BlazoredModal.CancelAsync();
 }
