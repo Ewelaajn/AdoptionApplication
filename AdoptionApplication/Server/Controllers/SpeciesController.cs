@@ -29,14 +29,19 @@ namespace AdoptionApplication.Server.Controllers
             try
             {
                 var result = await _speciesService.UpsertNewSpecies(species);
-                return Ok(result);
+                return Accepted(result);
             }
             catch(Exception ex)
             {
                 return BadRequest($"{ex.Message}, {ex.StackTrace}");
             }
         }
-        /*[HttpPut]
-        [HttpDelete]*/
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteSpecies(int id)
+        {
+            await _speciesService.DeleteSpecies(id);
+            return Accepted();
+        }
     }
 }

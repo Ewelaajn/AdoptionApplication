@@ -8,5 +8,6 @@ namespace AdoptionApplication.Server.Services.SpeciesService
         Task<ICollection<Species>> GetSpeciesAsync();
         Task<Species> GetSpeciesByUrlAsync(string speciesUrl);
         Task<Species> UpsertNewSpecies(Species species);
+        Task DeleteSpecies(int id);
     }
 }

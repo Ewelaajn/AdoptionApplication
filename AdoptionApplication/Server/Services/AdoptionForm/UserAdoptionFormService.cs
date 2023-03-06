@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using AdoptionApplication.Shared.DTO;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             _validator = validator;
         }
 
-        public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm newForm)
+        public async Task<UserAdoptionForm> UpsertUserForm(UserAdoptionForm newForm)
         {
             var validation = _validator.Validate(newForm);
             if (!validation.IsValid)
@@ -71,9 +72,22 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             return form;
         }
 
-        public async Task<ICollection<UserAdoptionForm>> GetUserAdoptionFormsAsync()
+        public async Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page)
         {
-            return await _dataContext.AdoptionForms.ToListAsync();
+            var query = _dataContext.AdoptionForms.AsNoTracking()
+                .Where(x => x.Deleted == false);
+            var total = await query.CountAsync();
+            query = ApplyPagination(query, page);
+            return new BatchAdoptionForm { Total = total, AdoptionForms = await query.ToListAsync() };
+        }
+        
+        private IQueryable<UserAdoptionForm> ApplyPagination(IQueryable<UserAdoptionForm> query, int? page)
+        {
+            var toSkip = PaginationService.HowManyItemsSkip(page);
+            if (toSkip != null)
+                query = query.Skip(toSkip.Value).Take(PaginationService.PageItems);
+
+            return query;
         }
     }
 }
