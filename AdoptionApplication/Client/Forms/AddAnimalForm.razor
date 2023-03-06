@@ -1,5 +1,6 @@
 ﻿@page "/animal/create"
 @page "/animal/update/{id}"
+@using Blazored.Toast.Services;
 @inject ISpeciesService SpeciesService
 @inject IAnimalService AnimalService
 @inject IToastService ToastService
@@ -265,7 +266,7 @@ else if (showSuccessMessage)
                 showSuccessMessage = true;
                 StateHasChanged();
                 await Task.Delay(2000);
-                ToastService.ShowSuccess("Pomyślnie dodano nowego zwierzaka!");
+                ToastService.ShowSuccess("Operacja ukończona pomyślnie! Zmiany zostały wprowadzone");
                 Navigation.NavigateTo("/");
             }
             else if (result == null)
@@ -274,7 +275,7 @@ else if (showSuccessMessage)
                 showSuccessMessage = false;
                 StateHasChanged();
                 await Task.Delay(2000);
-                ToastService.ShowError("Nie udało się dodać nowego zwierzaka. Spróbuj ponownie.");
+                ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie.");
                 Navigation.NavigateTo("/");
             }
         }

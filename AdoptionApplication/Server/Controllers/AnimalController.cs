@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Server.Services.Animals;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdoptionApplication.Server.Controllers
@@ -16,17 +17,17 @@ namespace AdoptionApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<Animal>>> GetAnimals()
+        public async Task<ActionResult<BatchAnimal>> GetAnimals([FromQuery] int? page)
         {
-            var animals = await _animalService.GetAnimalsAsync();
+            var animals = await _animalService.GetAnimalsAsync(page);
             return Ok(animals);
 
         }
 
         [HttpGet("Species/{speciesUrl}")]
-        public async Task<ActionResult<ICollection<Animal>>> GetAnimalsBySpecies(string speciesUrl)
+        public async Task<ActionResult<BatchAnimal>> GetAnimalsBySpecies(string speciesUrl, [FromQuery] int? page)
         {
-            var animals = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl);
+            var animals = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl, page);
             return Ok(animals);
         }
 

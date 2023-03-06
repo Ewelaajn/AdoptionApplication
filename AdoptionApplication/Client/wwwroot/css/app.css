@@ -1,5 +1,23 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.dropdown-menu-wide .dropdown-divider {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.dropdown-menu-wide a.nav-link {
+    width: 100%;
+}
+
+.dropdown-menu-wide {
+    width: 100%;
+    max-width: 500px;
+}
+
+.dropdown-menu {
+    max-width: 100%;
+}
+
 .form-row {
     display: flex;
     flex-wrap: wrap;

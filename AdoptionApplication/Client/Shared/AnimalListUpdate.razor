@@ -80,6 +80,85 @@
     }
 </ul>
 
-@code {
+<Pagination>
+    <PaginationItem Disabled="@IsPageNavigationDisabled(PREVIOUS)" @onclick="Previous">
+        <PaginationLink>
+            <span aria-hidden="true">«</span>
+        </PaginationLink>
+    </PaginationItem>
+    @{
+        for (var i = 1; i <= pageItems; i++)
+        {
+            var pageNumberAsString = i.ToString();
+            <PaginationItem @key="pageNumberAsString" Active="@IsActive(pageNumberAsString)">
+                <PaginationLink Page="@pageNumberAsString" Clicked="SetActive">
+                    @pageNumberAsString
+                </PaginationLink>
+            </PaginationItem>
+        }
+    }
+    <PaginationItem Disabled="@IsPageNavigationDisabled(NEXT)" @onclick="Next">
+        <PaginationLink>
+            <span aria-hidden="true">»</span>
+        </PaginationLink>
+    </PaginationItem>
+</Pagination>
 
+@code {
+    private string currentPage = "1";
+    private const string PREVIOUS = "previous";
+    private const string NEXT = "next";
+    private int pageItems = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPage = "1";
+        var total = await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage));
+        pageItems = total / PaginationService.PageItems;
+        StateHasChanged();
+    }
+
+    private bool IsActive(string page)
+    {
+        return currentPage == page;
+    }
+
+    private bool IsPageNavigationDisabled(string navigation)
+    {
+        if (navigation.Equals(PREVIOUS))
+        {
+            return currentPage.Equals("1");
+        }
+        else if (navigation.Equals(NEXT))
+        {
+            return currentPage.Equals(pageItems.ToString());
+        }
+        return false;
+    }
+
+    private async Task Previous()
+    {
+        var currentPageAsInt = int.Parse(currentPage);
+        if (currentPageAsInt > 1)
+        {
+            currentPage = (currentPageAsInt - 1).ToString();
+            await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage));
+        }
+    }
+
+    private async Task Next()
+    {
+        var currentPageAsInt = int.Parse(currentPage);
+        if (currentPageAsInt < pageItems)
+        {
+            currentPage = (currentPageAsInt + 1).ToString();
+            await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage));
+        }
+    }
+
+    private async Task SetActive(string page)
+    {
+        currentPage = page;
+        await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage));
+    }
 }

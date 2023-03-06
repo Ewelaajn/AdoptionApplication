@@ -4,6 +4,9 @@ using AdoptionApplication.Client.Services.AnimalService;
 using AdoptionApplication.Client.Services.SpeciesService;
 using Blazored.Modal;
 using Blazored.Toast;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -17,5 +20,13 @@ builder.Services.AddScoped<ISpeciesService, SpeciesService>();
 builder.Services.AddScoped<IAdoptionFormService, AdoptionFormService>();
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredToast();
+
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true;
+    })
+    .AddBootstrapProviders()
+    .AddFontAwesomeIcons();
 
 await builder.Build().RunAsync();

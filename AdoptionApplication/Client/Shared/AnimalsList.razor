@@ -1,13 +1,24 @@
 ﻿@inject IAnimalService AnimalService
 @implements IDisposable
 
+@if (AnimalService.Animals == null)
+{
+    <p>Trwa ładowanie...</p>
+}
+else if (AnimalService.Animals.Count == 0)
+{
+    <p>
+        Wszystkie zwierzaki zostały adoptowane!
+        Zajrzyj do nas za jakiś czas.
+    </p>
+}
 <div class="form-row">
-    <div class="form-group col-md-1">
+    <div class="form-group col-md-4 col-lg-3">
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownCityButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownCityButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Miasto
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownCityButton">
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownCityButton">
                 <button class="dropdown-item" @onclick="() => UpdateCity(null)">Wszystkie</button>
                 @foreach (var city in AnimalService.Animals.Select(x => x.City).Distinct().ToList())
                 {
@@ -16,12 +27,12 @@
             </div>
         </div>
     </div>
-    <div class="form-group col-md-1">
+    <div class="form-group col-md-4 col-lg-3">
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Województwo
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownProvinceButton">
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
                 <button class="dropdown-item" @onclick="() => UpdateProvince(null)">Wszystkie</button>
                 @foreach (var province in AnimalService.Animals.Select(x => x.Province).Distinct().ToList())
                 {
@@ -30,12 +41,12 @@
             </div>
         </div>
     </div>
-    <div class="form-group col-md-1">
+    <div class="form-group col-md-4 col-lg-3">
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownAdoptionStatusButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownAdoptionStatusButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Status adopcji
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownAdoptionStatusButton">
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownAdoptionStatusButton">
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(null)">Wszystkie</button>
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.Adopted)">Adoptowane</button>
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.ToAdopt)">Szukające domu</button>
@@ -102,7 +113,6 @@
     }
 </ul>
 
-
 @code {
     //[Parameter]
     //public int? SpeciesId { get; set; } = null;
@@ -112,6 +122,7 @@
 
     protected override void OnInitialized()
     {
+        //await AnimalService.LoadAnimals();
         AnimalService.OnChange += StateHasChanged;
     }
 
