@@ -1,4 +1,5 @@
 ﻿@page "/animal/species"
+@page "/animal/species/{id}"
 @inject ISpeciesService SpeciesService
 
 @if (showErrorMessage)
@@ -94,6 +95,8 @@ else
     private bool showErrorMessage = false;
     private bool showSuccessMessage = false;
     private bool internalError = false;
+    [Parameter]
+    public string Id { get; set; }
 
     [Inject]
     public NavigationManager Navigation { get; set; }
@@ -103,7 +106,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        newSpecies = new Species();
+        if(string.IsNullOrWhiteSpace(Id))
+            newSpecies = new Species();
+        else
+        {
+            //newSpecies = await SpeciesService.GetSpecies(Int32.Parse(Id));
+        }
     }
 
     private async Task AddSpecies()
