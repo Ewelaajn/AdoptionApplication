@@ -29,6 +29,7 @@ else
                     <button class="dropdown-item" @onclick="() => UpdateCity(city)">@city</button>
                 }
             </div>
+            <p>@city</p>
         </div>
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -43,6 +44,7 @@ else
                     <button class="dropdown-item" @onclick="() => UpdateProvince(province)">@province</button>
                 }
             </div>
+            <p>@province</p>
         </div>
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -55,6 +57,14 @@ else
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.Adopted)">Adoptowane</button>
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.ToAdopt)">Szukające domu</button>
             </div>
+            @if (isAdopted.HasValue && isAdopted == true)
+            {
+                <p>@AdoptionStatusConstants.Adopted</p>
+            }
+            else if(isAdopted.HasValue && isAdopted == false)
+            {
+                <p>@AdoptionStatusConstants.ToAdopt</p>
+            }
         </div>
     </div>
 </div>

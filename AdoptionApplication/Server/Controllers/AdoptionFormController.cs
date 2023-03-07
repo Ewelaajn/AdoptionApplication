@@ -42,7 +42,7 @@ namespace AdoptionApplication.Server.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
+        [HttpPut("status")]
         public async Task<ActionResult<UserAdoptionForm>> UpdateFormStatus([FromBody] UserAdoptionForm form)
         {
             var result = await _userAdoptionFormService.ChangeFormStatus(form.Id, form.Status);

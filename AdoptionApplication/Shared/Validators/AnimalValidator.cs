@@ -15,6 +15,8 @@ namespace AdoptionApplication.Shared.Validators
             RuleFor(x => x.Province).NotEmpty();
             RuleFor(x => x.Image).NotEmpty();
             RuleFor(x => x.DateOfBirth).NotEmpty();
+            RuleFor(x => x.AdoptionDate).NotEmpty();
+            RuleFor(x => x.AdoptionDate).GreaterThan(x => x.DateOfBirth);
             RuleFor(x => x.SpeciesId).NotEmpty();
         }
     }

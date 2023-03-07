@@ -65,11 +65,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -89,11 +84,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -104,11 +94,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -128,11 +113,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -143,11 +123,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -159,11 +134,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div class="form-group">
@@ -173,6 +143,9 @@ else if (showSuccessMessage)
                 <div class="form-group">
                     <label for="birthdate">Data adopcji:</label>
                     <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.AdoptionDate" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                    <div class="invalid-feedback">
+                          @ErrorMessagesConstants.AdoptionDateInfo
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="species">Gatunek:</label>
@@ -187,11 +160,6 @@ else if (showSuccessMessage)
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
                         </div>
-                        formValid = false;
-                    }
-                    else
-                    {
-                        formValid = true;
                     }
                 </div>
                 <div>
@@ -204,6 +172,17 @@ else if (showSuccessMessage)
                         Adoptowany
                     </label>
                 </div>
+                @if (newAnimal.IsAdopted == null || newAnimal.SpeciesId == 0 || string.IsNullOrWhiteSpace(newAnimal.Image)
+                     || string.IsNullOrWhiteSpace(newAnimal.Province) || string.IsNullOrWhiteSpace(newAnimal.City)
+                     || newAnimal.HealthStatus == null || string.IsNullOrWhiteSpace(newAnimal.Description)
+                     || string.IsNullOrWhiteSpace(newAnimal.Name) || newAnimal.Gender == null)
+                {
+                    formValid = false;
+                }
+                else
+                {
+                    formValid = true;
+                }
                 @if (string.IsNullOrWhiteSpace(@Id))
                 {
                     <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
@@ -257,25 +236,34 @@ else if (showSuccessMessage)
     {
         if (formValid)
         {
-            StateHasChanged();
-            var result = await AnimalService.AddNewAnimal(newAnimal);
+            try
+            {
+                StateHasChanged();
+                var result = await AnimalService.AddNewAnimal(newAnimal);
 
-            if (result != null)
-            {
-                showErrorMessage = false;
-                showSuccessMessage = true;
-                StateHasChanged();
-                await Task.Delay(2000);
-                ToastService.ShowSuccess("Operacja ukończona pomyślnie! Zmiany zostały wprowadzone");
-                Navigation.NavigateTo("/");
+                if (result != null)
+                {
+                    showErrorMessage = false;
+                    showSuccessMessage = true;
+                    StateHasChanged();
+                    await Task.Delay(2000);
+                    ToastService.ShowSuccess("Operacja ukończona pomyślnie! Zmiany zostały wprowadzone");
+                    Navigation.NavigateTo("/");
+                }
+                else if (result == null)
+                {
+                    showErrorMessage = true;
+                    showSuccessMessage = false;
+                    StateHasChanged();
+                    await Task.Delay(2000);
+                    ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie.");
+                    Navigation.NavigateTo("/");
+                }
             }
-            else if (result == null)
+            catch (Exception ex)
             {
-                showErrorMessage = true;
-                showSuccessMessage = false;
-                StateHasChanged();
-                await Task.Delay(2000);
                 ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie.");
+                await Task.Delay(2000);
                 Navigation.NavigateTo("/");
             }
         }
