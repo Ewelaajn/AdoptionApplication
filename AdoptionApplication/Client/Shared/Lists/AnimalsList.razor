@@ -7,10 +7,10 @@
 }
 else if (AnimalService.Animals.Count == 0)
 {
-    <p>
-        Wszystkie zwierzaki zostały adoptowane!
-        Zajrzyj do nas za jakiś czas.
-    </p>
+    <div class="shadow p-3 mb-5 bg-white rounded text-center my-5">
+        <h1>Wszystkie zwierzaki zostały adoptowane!
+            Zajrzyj do nas za jakiś czas.</h1>
+    </div>
 }
 <ul class="list-unstyled custom-list">
     @foreach (var animal in AnimalService.Animals)
