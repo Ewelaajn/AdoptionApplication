@@ -32,5 +32,20 @@ namespace AdoptionApplication.Client.Services.SpeciesService
                 return speciesResult;
             }
         }
+
+        public async Task<Species> GetSpecies(int id)
+        {
+            var result = await _httpClient.GetFromJsonAsync<Species>($"api/Species/{id}");
+            if(result == null)
+                throw new Exception("Something went wrong");
+            return result;
+        }
+
+        public async Task DeleteSpecies(int id)
+        {
+            var result = await _httpClient.DeleteAsync($"api/Species/{id}");
+            if (!result.IsSuccessStatusCode)
+                throw new Exception(result.ReasonPhrase);
+        }
     }
 }

@@ -17,17 +17,17 @@ namespace AdoptionApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BatchAnimal>> GetAnimals([FromQuery] int? page)
+        public async Task<ActionResult<BatchAnimal>> GetAnimals([FromQuery] int? page, [FromQuery]bool? isAdopted, [FromQuery]string? city, [FromQuery]string? province)
         {
-            var animals = await _animalService.GetAnimalsAsync(page);
+            var animals = await _animalService.GetAnimalsAsync(page, isAdopted, city, province);
             return Ok(animals);
 
         }
 
         [HttpGet("Species/{speciesUrl}")]
-        public async Task<ActionResult<BatchAnimal>> GetAnimalsBySpecies(string speciesUrl, [FromQuery] int? page)
+        public async Task<ActionResult<BatchAnimal>> GetAnimalsBySpecies(string speciesUrl, [FromQuery] int? page, [FromQuery]bool? isAdopted, [FromQuery]string? city, [FromQuery]string? province)
         {
-            var animals = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl, page);
+            var animals = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl, page, isAdopted, city, province);
             return Ok(animals);
         }
 
@@ -51,8 +51,12 @@ namespace AdoptionApplication.Server.Controllers
                 return BadRequest($"{ex.Message}, {ex.StackTrace}");
             }
         }
-        /*[HttpPost]
-        [HttpPut]
-        [HttpDelete]*/
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAnimal(int id)
+        {
+            await _animalService.DeleteAnimal(id);
+            return Ok();
+        }
     }
 }

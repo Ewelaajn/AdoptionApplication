@@ -24,7 +24,14 @@ namespace AdoptionApplication.Server.Services.SpeciesService
 
         public async Task<Species> GetSpeciesByUrlAsync(string speciesUrl)
         {
-            return await _dataContext.Species.AsNoTracking().FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower());
+            return await _dataContext.Species.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower());
+        }
+
+        public async Task<Species> GetSingleSpeciesAsync(int id)
+        {
+            var species = await _dataContext.Species.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return species;
         }
 
         public async Task<Species> UpsertNewSpecies(Species species)
@@ -35,7 +42,7 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                 if (!validation.IsValid)
                     return null;
 
-                
+
                 if (species.Id > 0)
                 {
                     var dbSpecies = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == species.Id);
@@ -48,10 +55,11 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                     else
                         _dataContext.Species.Add(species);
                 }
-                else if(species.Id == 0 || species.Id == null)
+                else if (species.Id == 0 || species.Id == null)
                 {
-                    var isSpeciesExists = await _dataContext.Species.FirstOrDefaultAsync(x => x.Name.ToLower() == species.Name.ToLower());
-                    if(isSpeciesExists != null)
+                    var isSpeciesExists =
+                        await _dataContext.Species.FirstOrDefaultAsync(x => x.Name.ToLower() == species.Name.ToLower());
+                    if (isSpeciesExists != null)
                     {
                         isSpeciesExists.Url = species.Url;
                         isSpeciesExists.Name = species.Name;
@@ -60,14 +68,22 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                     else
                         _dataContext.Species.Add(species);
                 }
-                    
+
                 await _dataContext.SaveChangesAsync();
                 return species;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw (ex);
             }
+        }
+
+        public async Task DeleteSpecies(int id)
+        {
+            var species = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == id);
+            if (species == null) return;
+            species.Deleted = true;
+            await _dataContext.SaveChangesAsync();
         }
     }
 }

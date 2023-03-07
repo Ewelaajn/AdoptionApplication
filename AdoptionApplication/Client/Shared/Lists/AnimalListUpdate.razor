@@ -1,20 +1,13 @@
-﻿@page "/"
-@page "/{speciesUrl}"
-@inject ISpeciesService SpeciesService
+﻿@page "/animal/all"
+@using FluentValidation
 @inject IAnimalService AnimalService
-
-@if(species != null)
-{
-    <div class="shadow p-3 mb-5 bg-white rounded">
-        <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+<ul class="list-unstyled col-8">
+    <div class="shadow p-3 mb-5 bg-white rounded text-center my-5">
+        <h1>Zwierzęta do adopcji</h1>
     </div>
-}   
-else
-{
-    <div class="shadow p-3 mb-5 bg-white rounded">
-        <h1>Zapoznaj się ze zwierzętami, które szukają domu!!</h1>
-    </div> 
-}
+</ul>
 
 <div class="form-row">
     <div class="form-group col-md-3 col-lg-2">
@@ -58,7 +51,82 @@ else
         </div>
     </div>
 </div>
- <AnimalsList />
+<ul class="list-unstyled col-8"> 
+    <div class="add-animal-box">
+    <h2>
+        <a href="/animal/create">
+            Dodaj nowe zwierzę do adopcji
+        </a>
+    </h2>
+    </div>
+    @foreach (var animal in AnimalService.Animals)
+    {
+        <li class="media my-3 bg-white rounded">
+            <div class="media-img-wrapper mr-2">
+                <a href="/animal/@animal.Id">
+                    <img class="media-img" src="@animal.Image" alt="@animal.Name"/>
+                </a>
+            </div>
+            <div class="media-body">
+                <a href="/animal/@animal.Id">
+                    <h4 class="mb-0">@animal.Name</h4>
+                </a>
+                <div class="text-info">Płeć: @animal.Gender</div>
+                <div class="text-info">Miasto: @animal.City</div>
+                <div class="text-info">Krótki opis: @animal.ShortDescription</div>
+                @if (animal.HealthStatus == HealthStatusContants.Healthy)
+                {
+                    <div class="text-success">@animal.HealthStatus</div>
+                }
+                else
+                {
+                    <div class="text-danger">@animal.HealthStatus</div>
+                }
+
+                <div class="d-flex align-items-center justify-content-between mt-2">
+                    @if (animal.IsAdopted == true)
+                    {
+                        @if (animal.Gender == GenderContants.Female)
+                        {
+                            <div class="badge badge-success">
+                                <head>
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+                                </head>
+                                <i class="fas fa-check"></i> @($"{AdoptionStatusConstants.SheAdopted}")
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="badge badge-success">
+                                <head>
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+                                </head>
+                                <i class="fas fa-check"></i> @($"{AdoptionStatusConstants.HeAdopted}")
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="badge badge-danger">
+                            <head>
+                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+                            </head>
+                            <i class="fas fa-times"></i> @($"{AdoptionStatusConstants.ToAdopt}")
+                        </div>
+                    }
+                    <div class="d-flex">
+                        <a href="/animal/update/@animal.Id" class="btn btn-sm btn-outline-secondary mr-2">
+                            <i class="fas fa-pen"></i> Aktualizuj
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(async () => await Delete(animal.Id))">
+                            <i class="fas fa-trash"></i> Usuń
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
 
 <Pagination>
     <PaginationItem Disabled="@IsPageNavigationDisabled(PREVIOUS)" @onclick="Previous">
@@ -70,12 +138,12 @@ else
         for (var i = 1; i <= pageItems; i++)
         {
             var pageNumberAsString = i.ToString();
-                    <PaginationItem @key="pageNumberAsString" Active="@IsActive(pageNumberAsString)">
-                        <PaginationLink Page="@pageNumberAsString" Clicked="SetActive">
+            <PaginationItem @key="pageNumberAsString" Active="@IsActive(pageNumberAsString)">
+                <PaginationLink Page="@pageNumberAsString" Clicked="SetActive">
                     @pageNumberAsString
-                        </PaginationLink>
-                    </PaginationItem>
-        } 
+                </PaginationLink>
+            </PaginationItem>
+        }
     }
     <PaginationItem Disabled="@IsPageNavigationDisabled(NEXT)" @onclick="Next">
         <PaginationLink>
@@ -84,10 +152,7 @@ else
     </PaginationItem>
 </Pagination>
 
-@code{
-    [Parameter]
-    public string SpeciesUrl { get; set; }
-    
+@code {
     private string currentPage = "1";
     private const string PREVIOUS = "previous";
     private const string NEXT = "next";
@@ -95,37 +160,28 @@ else
     private bool? isAdopted;
     private string? city;
     private string? province;
-    
+
     public List<string?> Provinces { get; set; } = new();
     public List<string?> Cities { get; set; } = new();
 
-    private Species species = null;
-
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         currentPage = "1";
-        province = null;
-        isAdopted = null;
-        city = null;
         await UpdateAnimalList();
         Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
         Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
-
-        if (SpeciesUrl != null)
-            species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
-        else
-            species = null;
+        StateHasChanged();
     }
 
     private async Task UpdateAnimalList()
     {
-        var total = await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), isAdopted, city, province, SpeciesUrl);
+        var total = await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage), isAdopted, city, province);
         pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
     }
-    
+
     private bool IsActive(string page)
     {
-       return currentPage == page;
+        return currentPage == page;
     }
 
     private bool IsPageNavigationDisabled(string navigation)
@@ -210,5 +266,20 @@ else
         province = chosenProvince;
         await UpdateAnimalList();
         StateHasChanged();
+    }
+
+    protected async Task Delete(int id)
+    {
+        try
+        {
+            await AnimalService.DeleteAnimal(id);
+            ToastService.ShowSuccess("Pomyślnie usunięto zwierzę z listy");
+            await Task.Delay(1000);
+            NavigationManager.NavigateTo(NavigationManager.Uri, true);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("Coś poszło nie tak, spróbuj ponownie.");
+        }
     }
 }

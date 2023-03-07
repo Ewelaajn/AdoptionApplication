@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using AdoptionApplication.Shared.DTO;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             _validator = validator;
         }
 
-        public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm newForm)
+        public async Task<UserAdoptionForm> UpsertUserForm(UserAdoptionForm newForm)
         {
             var validation = _validator.Validate(newForm);
             if (!validation.IsValid)
@@ -53,15 +54,6 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             return form;
         }
 
-        public async Task DeleteForm(int id)
-        {
-            var form = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Id == id);
-            if(form == null) return;
-
-            form.Deleted = true;
-            await _dataContext.SaveChangesAsync();
-        }
-
         public async Task<UserAdoptionForm> GetUserAdoptionFormAsync(int id)
         {
             var form = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Id == id);
@@ -71,9 +63,36 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             return form;
         }
 
-        public async Task<ICollection<UserAdoptionForm>> GetUserAdoptionFormsAsync()
+        public async Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page, string? email, int? animalId)
         {
-            return await _dataContext.AdoptionForms.ToListAsync();
+            var query = _dataContext.AdoptionForms.AsNoTracking()
+                .Include(x => x.Animal)
+                .OrderBy(x => x.Id)
+                .Where(x => x.Deleted == false);
+            query = PrepareQuery(query, email, animalId);
+            var total = await query.CountAsync();
+            query = ApplyPagination(query, page);
+            
+            return new BatchAdoptionForm { Total = total, AdoptionForms = await query.ToListAsync() };
+        }
+        
+        private IQueryable<UserAdoptionForm> PrepareQuery(IQueryable<UserAdoptionForm> query, string? email, int? animalId)
+        {
+            if (!string.IsNullOrWhiteSpace(email))
+                query = query.Where(x => x.Email == email);
+            if (animalId.HasValue)
+                query = query.Where(x => x.AnimalId == animalId);
+
+            return query;
+        }
+        
+        private IQueryable<UserAdoptionForm> ApplyPagination(IQueryable<UserAdoptionForm> query, int? page)
+        {
+            var toSkip = PaginationService.HowManyItemsSkip(page);
+            if (toSkip != null)
+                query = query.Skip(toSkip.Value).Take(PaginationService.PageItems);
+
+            return query;
         }
     }
 }

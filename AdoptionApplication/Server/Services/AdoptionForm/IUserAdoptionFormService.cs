@@ -1,13 +1,13 @@
 ﻿using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Server.Services.AdoptionForm
 {
     public interface IUserAdoptionFormService
     {
-        Task<ICollection<UserAdoptionForm>> GetUserAdoptionFormsAsync();
+        Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page, string? email, int? animalId);
         Task<UserAdoptionForm> GetUserAdoptionFormAsync(int id);
         Task<UserAdoptionForm> ChangeFormStatus(int formId, string status);
-        Task<UserAdoptionForm> AddNewForm(UserAdoptionForm newForm);
-        Task DeleteForm(int id);
+        Task<UserAdoptionForm> UpsertUserForm(UserAdoptionForm newForm);
     }
 }

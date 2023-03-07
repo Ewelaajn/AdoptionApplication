@@ -25,26 +25,45 @@ namespace AdoptionApplication.Server.Services.Animals
 
         public async Task<Animal> GetAnimalByIdAsync(int id) => await _dataContext.Animals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false);
 
-        public async Task<BatchAnimal> GetAnimalsAsync(int? page) 
+        public async Task<BatchAnimal> GetAnimalsAsync(int? page, bool? isAdopted, string? city, string? province) 
         {
-            var query = _dataContext.Animals.AsNoTracking().Where(x => x.Deleted == false);
+            var query = _dataContext.Animals.AsNoTracking()
+                .OrderBy(x => x.Id).AsQueryable();
+            
+            query = PrepareQuery(query, isAdopted, city, province, default);
             var total = await query.CountAsync();
             query = ApplyPagination(query, page);
+            
             return new BatchAnimal { Animals = await query.ToListAsync(), Total = total };
         } 
 
-        public async Task<BatchAnimal> GetAnimalsBySpeciesAsync(string speciesUrl, int? page)
+        public async Task<BatchAnimal> GetAnimalsBySpeciesAsync(string speciesUrl, int? page, bool? isAdopted, string? city, string? province)
         {
             var species = await _speciesService.GetSpeciesByUrlAsync(speciesUrl);
-            
-            var query = _dataContext.Animals.AsNoTracking()
-                .OrderBy(x => x.Id)
-                .Where(x => x.SpeciesId == species.Id && x.Deleted == false);
 
+            var query = _dataContext.Animals.AsNoTracking()
+                .OrderBy(x => x.Id).AsQueryable();
+
+            query = PrepareQuery(query, isAdopted, city, province, species.Id);
             var total = await query.CountAsync();
             query = ApplyPagination(query, page);
 
             return new BatchAnimal { Animals = await query.ToListAsync(), Total = total };
+        }
+
+        private IQueryable<Animal> PrepareQuery(IQueryable<Animal> query, bool? isAdopted, string? city,
+            string? province, int? speciesId)
+        {
+            if (isAdopted.HasValue)
+                query = query.Where(x => x.IsAdopted == isAdopted);
+            if (!string.IsNullOrWhiteSpace(city))
+                query = query.Where(x => x.City == city);
+            if (!string.IsNullOrWhiteSpace(province))
+                query = query.Where(x => x.Province == province);
+            if (speciesId.HasValue)
+                query = query.Where(x => x.SpeciesId == speciesId);
+
+            return query.Where(x => x.Deleted == false);
         }
 
         private IQueryable<Animal> ApplyPagination(IQueryable<Animal> query, int? page)
@@ -89,6 +108,14 @@ namespace AdoptionApplication.Server.Services.Animals
             {
                 throw (ex);
             }
+        }
+
+        public async Task DeleteAnimal(int id)
+        {
+            var animal = await _dataContext.Animals.FirstOrDefaultAsync(x => x.Id == id);
+            if (animal == null) return;
+            animal.Deleted = true;
+            await _dataContext.SaveChangesAsync();
         }
     }
 }
