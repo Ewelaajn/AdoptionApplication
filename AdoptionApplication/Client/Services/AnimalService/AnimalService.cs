@@ -36,17 +36,17 @@ namespace AdoptionApplication.Client.Services.AnimalService
         public async Task<Animal> GetAnimalAsync(int id)
         => await _httpClient.GetFromJsonAsync<Animal>($"api/Animal/{id}");
 
-        public async Task<int> LoadAnimalsAsync(int? page, string speciesUrl = null)
+        public async Task<int> LoadAnimalsAsync(int? page, bool? isAdopted, string? city, string? province, string speciesUrl = null)
         {
             BatchAnimal result;
             if (string.IsNullOrEmpty(speciesUrl))
             {
-                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}");
+                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
                 Animals = result.Animals;
             }
             else
             {
-                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal/Species/{speciesUrl}?page={page}");
+                result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal/Species/{speciesUrl}?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
                 Animals = result.Animals;
             }
                 
@@ -54,9 +54,9 @@ namespace AdoptionApplication.Client.Services.AnimalService
             return result.Total;
         }
 
-        public async Task<int> LoadAnimalsAsyncForAll(int? page)
+        public async Task<int> LoadAnimalsAsyncForAll(int? page, bool? isAdopted, string? city, string? province)
         {
-            var result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}");
+            var result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
             Animals = result.Animals;
             
             return result.Total;

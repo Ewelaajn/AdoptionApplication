@@ -52,8 +52,8 @@ else
     protected override async Task OnParametersSetAsync()
     {
         currentPage = "1";
-        var total = await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
-        pageItems = total / PaginationService.PageItems;
+        var total = await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), null, null, null, SpeciesUrl);
+        pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
 
         if (SpeciesUrl != null)
             species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
@@ -89,7 +89,7 @@ else
         if (currentPageAsInt > 1)
         {
             currentPage = (currentPageAsInt - 1).ToString();
-            await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+            //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
         }
     }
 
@@ -99,13 +99,13 @@ else
         if (currentPageAsInt < pageItems)
         {
             currentPage = (currentPageAsInt + 1).ToString();
-            await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+            //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
         }
     }
 
     private async Task SetActive(string page)
     {
         currentPage = page;
-        await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+        //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
     }
 }
