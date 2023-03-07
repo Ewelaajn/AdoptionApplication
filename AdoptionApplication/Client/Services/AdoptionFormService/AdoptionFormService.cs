@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Shared;
 using System.Net.Http.Json;
 using System.Text.Json;
+using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Client.Services.AdoptionFormService
 {
@@ -23,6 +24,21 @@ namespace AdoptionApplication.Client.Services.AdoptionFormService
                 UserAdoptionForm? userAdoptionForm = await JsonSerializer.DeserializeAsync<UserAdoptionForm>(await result.Content.ReadAsStreamAsync());
                 return userAdoptionForm;
             }
+        }
+
+        public Task<UserAdoptionForm> ChangeStatus(UserAdoptionForm form)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BatchAdoptionForm> GetAllForms(int? page, string? email, int? animalId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserAdoptionForm> GetForm(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

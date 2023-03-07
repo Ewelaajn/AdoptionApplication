@@ -51,8 +51,12 @@ namespace AdoptionApplication.Server.Controllers
                 return BadRequest($"{ex.Message}, {ex.StackTrace}");
             }
         }
-        /*[HttpPost]
-        [HttpPut]
-        [HttpDelete]*/
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAnimal(int id)
+        {
+            await _animalService.DeleteAnimal(id);
+            return Ok();
+        }
     }
 }

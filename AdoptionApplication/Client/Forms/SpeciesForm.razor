@@ -126,7 +126,7 @@ else
                 await BlazoredModal.CloseAsync(ModalResult.Ok(newSpecies.Name));
                 StateHasChanged();
                 await Task.Delay(3000);
-                Navigation.NavigateTo("/");
+                Navigation.NavigateTo(Navigation.Uri, true);
             }
             else if (result == null)
             {

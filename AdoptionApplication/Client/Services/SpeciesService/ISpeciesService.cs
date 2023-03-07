@@ -8,5 +8,6 @@ namespace AdoptionApplication.Client.Services.SpeciesService
 
         Task LoadSpecies();
         Task<Species> UpsertSpecies(Species species);
+        Task DeleteSpecies(int id);
     }
 }

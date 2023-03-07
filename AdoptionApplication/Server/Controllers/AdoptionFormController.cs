@@ -18,9 +18,9 @@ namespace AdoptionApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BatchAdoptionForm>> GetForms([FromQuery] int? page)
+        public async Task<ActionResult<BatchAdoptionForm>> GetForms([FromQuery] int? page, [FromQuery] int? animalId, [FromQuery] string? email)
         {
-            var forms = await _userAdoptionFormService.GetUserAdoptionFormsAsync(page);
+            var forms = await _userAdoptionFormService.GetUserAdoptionFormsAsync(page, email, animalId);
             return Ok(forms);
         }
         

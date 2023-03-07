@@ -33,6 +33,13 @@ namespace AdoptionApplication.Client.Services.AnimalService
             }
         }
 
+        public async Task DeleteAnimal(int id)
+        {
+            var result = await _httpClient.DeleteAsync($"api/Animal/{id}");
+            if (!result.IsSuccessStatusCode)
+                throw new Exception(result.ReasonPhrase);
+        }
+
         public async Task<Animal> GetAnimalAsync(int id)
         => await _httpClient.GetFromJsonAsync<Animal>($"api/Animal/{id}");
 

@@ -109,5 +109,13 @@ namespace AdoptionApplication.Server.Services.Animals
                 throw (ex);
             }
         }
+
+        public async Task DeleteAnimal(int id)
+        {
+            var animal = await _dataContext.Animals.FirstOrDefaultAsync(x => x.Id == id);
+            if (animal == null) return;
+            animal.Deleted = true;
+            await _dataContext.SaveChangesAsync();
+        }
     }
 }
