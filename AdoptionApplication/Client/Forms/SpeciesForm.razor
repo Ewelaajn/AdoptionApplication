@@ -27,7 +27,7 @@ else if (internalError)
 else if (showSuccessMessage)
 {
     <div class="alert alert-success" role="alert">
-        Nowy gatunek został dodany!
+        Operacja przebiegła pomyślnie!
     </div>
 }
 else
@@ -35,7 +35,14 @@ else
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h1 class="text-center display-4" style="font-family: Arial, sans-serif; font-size: 2.5rem; color: #555;">Dodaj nowy gatunek zwierzęcia</h1>
+                @if (string.IsNullOrWhiteSpace(Id))
+                {
+                    <h1 class="text-center display-4" style="font-family: Arial, sans-serif; font-size: 2.5rem; color: #555;">Dodaj nowy gatunek zwierzęcia</h1>
+                }
+                else
+                {
+                    <h1 class="text-center display-4" style="font-family: Arial, sans-serif; font-size: 2.5rem; color: #555;">Aktualizuj gatunek zwierzęcia</h1>
+                }
             </div>
             <div class="card-body">
                 <form class="form" @onsubmit="AddSpecies">
@@ -75,10 +82,20 @@ else
                         }
                         else { formValid = true; }
                     </div>
+                    
                     <div class="text-center">
-                        <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
-                            <span class="oi oi-plus"></span> Dodaj
-                        </button>
+                        @if (string.IsNullOrWhiteSpace(Id))
+                        {
+                            <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
+                                <span class="oi oi-plus"></span> Dodaj
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
+                                <span class="oi oi-plus"></span> Aktualizuj
+                            </button>
+                        }
                         <button type="button" class="btn btn-custom ml-2" @onclick="Cancel">
                             <i class="fas fa-times"></i> Anuluj
                         </button>
@@ -110,7 +127,7 @@ else
             newSpecies = new Species();
         else
         {
-            //newSpecies = await SpeciesService.GetSpecies(Int32.Parse(Id));
+            newSpecies = await SpeciesService.GetSpecies(Int32.Parse(Id));
         }
     }
 

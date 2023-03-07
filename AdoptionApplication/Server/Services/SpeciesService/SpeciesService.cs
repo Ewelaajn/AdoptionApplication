@@ -28,6 +28,12 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                 .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower());
         }
 
+        public async Task<Species> GetSingleSpeciesAsync(int id)
+        {
+            var species = await _dataContext.Species.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return species;
+        }
+
         public async Task<Species> UpsertNewSpecies(Species species)
         {
             try

@@ -1,4 +1,6 @@
-﻿namespace AdoptionApplication.Shared
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AdoptionApplication.Shared
 {
     public class Species
     {
@@ -8,6 +10,7 @@
         public string? Icon { get; set; }
         public DateTime? CreateDate { get; set; }
         public bool? Deleted { get; set; }
+        [NotMapped]
         public virtual List<Animal?>? Animals { get; set; }
     }
 }

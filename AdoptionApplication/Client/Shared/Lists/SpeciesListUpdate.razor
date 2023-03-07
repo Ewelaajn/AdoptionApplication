@@ -1,0 +1,88 @@
+﻿@page "/animal/species/all"
+@inject ISpeciesService SpeciesService
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@using IModalService = Blazored.Modal.Services.IModalService
+
+
+<ul class="list-group col-6">
+    <div class="shadow p-3 mb-5 bg-white rounded text-center my-5">
+            <h1>Aktualnie dodane gatunki zwierząt</h1>
+        </div>
+    <div class="add-animal-box">
+        <h2>
+            <a class="nav-link" @onclick="() => ShowModal(null)" style="cursor: pointer;">
+                Dodaj nowy gatunek
+            </a>
+        </h2>
+    </div>
+    @foreach (var species in SpeciesService.Species)
+    {
+        <li class="list-group-item shadow p-3 mb-3 bg-white rounded">
+            <div class="row">
+                <div class="col-10">
+                    <a href="@species.Url">
+                        <i class="@species.Icon fa-lg mr-2"></i> <span class="text-large">@species.Name</span>
+                    </a>
+                </div>
+            <div class="d-flex">
+                <a class="btn btn-sm btn-outline-secondary mr-2" @onclick="() => ShowModal(species.Id)">
+                    <i class="fas fa-pen"></i> Aktualizuj
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => Delete(species.Id)">
+                    <i class="fas fa-trash"></i> Usuń
+                </button>
+            </div>
+            </div>
+        </li>
+    }
+</ul>
+
+@code {
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        await SpeciesService.LoadSpecies();
+    }
+
+    private async Task Delete(int id)
+    {
+        try
+        {
+            await SpeciesService.DeleteSpecies(id);
+            ToastService.ShowSuccess("Pomyślne usunięto gatunek.");
+            await Task.Delay(1500);
+            NavigationManager.NavigateTo(NavigationManager.Uri, true);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("Coś poszło nie tak, spróbuj ponownie później.");
+            await Task.Delay(1000);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+    
+    private async Task ShowModal(int? id)
+    {
+        IModalReference speciesModal = null;
+        
+        if (id.HasValue)
+        {
+            var modalParameters = new ModalParameters
+            {
+                { "Id", id.ToString() }
+            };
+            speciesModal = Modal.Show<SpeciesForm>(null, modalParameters);
+        }
+        else
+            speciesModal = Modal.Show<SpeciesForm>();
+        
+        var result = await speciesModal.Result;
+    
+        if(result.Data != null)
+        {
+            ToastService.ShowSuccess($"Dodano nowy gatunek {result.Data}");
+        }
+    }
+}
