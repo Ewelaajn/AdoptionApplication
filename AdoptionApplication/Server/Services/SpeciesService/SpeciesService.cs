@@ -19,13 +19,13 @@ namespace AdoptionApplication.Server.Services.SpeciesService
 
         public async Task<ICollection<Species>> GetSpeciesAsync()
         {
-            return await _dataContext.Species.AsNoTracking().ToListAsync();
+            return await _dataContext.Species.AsNoTracking().Where(x => x.Deleted == false).ToListAsync();
         }
 
         public async Task<Species> GetSpeciesByUrlAsync(string speciesUrl)
         {
             return await _dataContext.Species.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower());
+                .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower() && x.Deleted == false);
         }
 
         public async Task<Species> GetSingleSpeciesAsync(int id)
