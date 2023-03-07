@@ -28,7 +28,6 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             if (alreadyExists != null)
                 return newForm;
 
-            newForm.Deleted = false;
             newForm.Status = AdoptionFormStatusConstants.New;
             _dataContext.AdoptionForms.Add(newForm);
             await _dataContext.SaveChangesAsync();

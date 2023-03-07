@@ -58,7 +58,7 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                 else if (species.Id == 0 || species.Id == null)
                 {
                     var isSpeciesExists =
-                        await _dataContext.Species.FirstOrDefaultAsync(x => x.Name.ToLower() == species.Name.ToLower());
+                        await _dataContext.Species.FirstOrDefaultAsync(x => x.Name.ToLower() == species.Name.ToLower() && x.Deleted == false);
                     if (isSpeciesExists != null)
                     {
                         isSpeciesExists.Url = species.Url;

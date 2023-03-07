@@ -16,13 +16,16 @@ namespace AdoptionApplication.Client.Services.AdoptionFormService
 
         public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm form)
         {
-            var result = await _httpClient.PostAsJsonAsync<UserAdoptionForm>($"api/AdoptionForm", form);
-            if (result.StatusCode == System.Net.HttpStatusCode.NotFound || result.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                return null;
-            else
+            var result = await _httpClient.PutAsJsonAsync("api/AdoptionForm", form);
+            switch (result.StatusCode)
             {
-                UserAdoptionForm? userAdoptionForm = await JsonSerializer.DeserializeAsync<UserAdoptionForm>(await result.Content.ReadAsStreamAsync());
-                return userAdoptionForm;
+                case System.Net.HttpStatusCode.NotFound or System.Net.HttpStatusCode.BadRequest:
+                    return null;
+                default:
+                {
+                    UserAdoptionForm? userAdoptionForm = await JsonSerializer.DeserializeAsync<UserAdoptionForm>(await result.Content.ReadAsStreamAsync());
+                    return userAdoptionForm;
+                }
             }
         }
 

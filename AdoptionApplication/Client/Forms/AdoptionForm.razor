@@ -64,11 +64,6 @@ else
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
                     </div>
-                    formValid = false;
-                }
-                else
-                {
-                    formValid = true;
                 }
             </div>
             <div class="form-group">
@@ -79,11 +74,6 @@ else
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
                     </div>
-                    formValid = false;
-                }
-                else
-                {
-                    formValid = true;
                 }
             </div>
             <div class="form-group">
@@ -92,13 +82,8 @@ else
                 @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
                 {
                     <div class="invalid-feedback">
-                        @ErrorMessagesConstants.EmptyField
+                        @ErrorMessagesConstants.AgeFormInfo
                     </div>
-                    formValid = false;
-                }
-                else
-                {
-                    formValid = true;
                 }
             </div>
             <div class="form-group">
@@ -107,13 +92,8 @@ else
                 @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
                 {
                     <div class="invalid-feedback">
-                        @ErrorMessagesConstants.EmptyField
+                        @ErrorMessagesConstants.EmailFormInfo
                     </div>
-                    formValid = false;
-                }
-                else
-                {
-                    formValid = true;
                 }
             </div>
             <div class="form-group">
@@ -122,13 +102,8 @@ else
                 @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
                 {
                     <div class="invalid-feedback">
-                        @ErrorMessagesConstants.EmptyField
+                        @ErrorMessagesConstants.PhoneNumberFormInfo
                     </div>
-                    formValid = false;
-                }
-                else
-                {
-                    formValid = true;
                 }
             </div>
             <div class="form-group">
@@ -139,14 +114,22 @@ else
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
                     </div>
+                }
+            </div>
+            <div class="ml-auto">
+                @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe)
+                     || string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber)
+                     || string.IsNullOrWhiteSpace(adoptionForm.Email)
+                     || string.IsNullOrWhiteSpace(adoptionForm.Age)
+                     || string.IsNullOrWhiteSpace(adoptionForm.LastName)
+                     || string.IsNullOrWhiteSpace(adoptionForm.FirstName))
+                {
                     formValid = false;
                 }
                 else
                 {
                     formValid = true;
                 }
-            </div>
-            <div class="ml-auto">
                 <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
                     @ErrorMessagesConstants.ValidationFailed
                 </div>
@@ -230,7 +213,8 @@ else
         catch (Exception ex)
         {
             ToastService.ShowError("Coś poszło nie tak podczas wysłania formularza. Spróbuj ponownie.");
-            throw (ex);
+            await Task.Delay(2000);
+            Navigation.NavigateTo(Navigation.Uri, true);
         }
     }
 }
