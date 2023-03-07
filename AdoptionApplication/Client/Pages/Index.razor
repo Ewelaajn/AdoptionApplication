@@ -8,15 +8,57 @@
     <div class="shadow p-3 mb-5 bg-white rounded">
         <h1>Tutaj znajdziesz @species.Name do adopcji!</h1>
     </div>
-    <AnimalsList />
 }   
 else
 {
     <div class="shadow p-3 mb-5 bg-white rounded">
         <h1>Zapoznaj się ze zwierzętami, które szukają domu!!</h1>
-    </div>
-    <AnimalsList />
+    </div> 
 }
+
+<div class="form-row">
+    <div class="form-group col-md-4 col-lg-3">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownCityButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Miasto
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownCityButton">
+                <button class="dropdown-item" @onclick="() => UpdateCity(null)">Wszystkie</button>
+                @foreach (var city in Cities)
+                {
+                    <button class="dropdown-item" @onclick="() => UpdateCity(city)">@city</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-4 col-lg-3">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Województwo
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
+                <button class="dropdown-item" @onclick="() => UpdateProvince(null)">Wszystkie</button>
+                @foreach (var province in Provinces)
+                {
+                    <button class="dropdown-item" @onclick="() => UpdateProvince(province)">@province</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-4 col-lg-3">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownAdoptionStatusButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Status adopcji
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownAdoptionStatusButton">
+                <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(null)">Wszystkie</button>
+                <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.Adopted)">Adoptowane</button>
+                <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.ToAdopt)">Szukające domu</button>
+            </div>
+        </div>
+    </div>
+</div>
+ <AnimalsList />
 
 <Pagination>
     <PaginationItem Disabled="@IsPageNavigationDisabled(PREVIOUS)" @onclick="Previous">
@@ -45,15 +87,29 @@ else
 @code{
     [Parameter]
     public string SpeciesUrl { get; set; }
+    
+    private string currentPage = "1";
+    private const string PREVIOUS = "previous";
+    private const string NEXT = "next";
+    private int pageItems = 1;
+    private bool? isAdopted;
+    private string? city;
+    private string? province;
+    
+    public List<string?> Provinces { get; set; } = new();
+    public List<string?> Cities { get; set; } = new();
 
     private Species species = null;
-    private string currentPage = "1";
 
     protected override async Task OnParametersSetAsync()
     {
         currentPage = "1";
-        var total = await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), null, null, null, SpeciesUrl);
-        pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
+        province = null;
+        isAdopted = null;
+        city = null;
+        await UpdateAnimalList();
+        Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
+        Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
 
         if (SpeciesUrl != null)
             species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
@@ -61,10 +117,12 @@ else
             species = null;
     }
 
-    private const string PREVIOUS = "previous";
-    private const string NEXT = "next";
-    private int pageItems = 10;
-
+    private async Task UpdateAnimalList()
+    {
+        var total = await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), isAdopted, city, province, SpeciesUrl);
+        pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
+    }
+    
     private bool IsActive(string page)
     {
        return currentPage == page;
@@ -89,7 +147,7 @@ else
         if (currentPageAsInt > 1)
         {
             currentPage = (currentPageAsInt - 1).ToString();
-            //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+            await UpdateAnimalList();
         }
     }
 
@@ -99,13 +157,58 @@ else
         if (currentPageAsInt < pageItems)
         {
             currentPage = (currentPageAsInt + 1).ToString();
-            //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+            await UpdateAnimalList();
         }
     }
 
     private async Task SetActive(string page)
     {
         currentPage = page;
-        //await AnimalService.LoadAnimalsAsync(Int32.Parse(currentPage), SpeciesUrl);
+        await UpdateAnimalList();
+    }
+    
+    protected async Task UpdateAdoptionStatus(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            isAdopted = null;
+            await UpdateAnimalList();
+            StateHasChanged();
+        }
+        else
+        {
+            if (status.Equals(AdoptionStatusConstants.Adopted))
+            {
+                isAdopted = true;
+                await UpdateAnimalList();
+                StateHasChanged();
+            }
+            else if (status.Equals(AdoptionStatusConstants.ToAdopt))
+            {
+                isAdopted = false;
+                await UpdateAnimalList();
+                StateHasChanged();
+            }
+            else
+            {
+                isAdopted = null;
+                await UpdateAnimalList();
+                StateHasChanged();
+            }
+        }
+    }
+
+    protected async Task UpdateCity(string? chosenCity)
+    {
+        city = chosenCity;
+        await UpdateAnimalList();
+        StateHasChanged();
+    }
+    
+    protected async Task UpdateProvince(string? chosenProvince)
+    {
+        province = chosenProvince;
+        await UpdateAnimalList();
+        StateHasChanged();
     }
 }

@@ -18,7 +18,7 @@
             </button>
             <div class="dropdown-menu w-100" aria-labelledby="dropdownCityButton">
                 <button class="dropdown-item" @onclick="() => UpdateCity(null)">Wszystkie</button>
-                @foreach (var city in AnimalService.Animals.Select(x => x.City).Distinct().ToList())
+                @foreach (var city in Cities)
                 {
                     <button class="dropdown-item" @onclick="() => UpdateCity(city)">@city</button>
                 }
@@ -32,7 +32,7 @@
             </button>
             <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
                 <button class="dropdown-item" @onclick="() => UpdateProvince(null)">Wszystkie</button>
-                @foreach (var province in AnimalService.Animals.Select(x => x.Province).Distinct().ToList())
+                @foreach (var province in Provinces)
                 {
                     <button class="dropdown-item" @onclick="() => UpdateProvince(province)">@province</button>
                 }
@@ -155,10 +155,15 @@
     private string? city;
     private string? province;
 
+    public List<string?> Provinces { get; set; } = new();
+    public List<string?> Cities { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         currentPage = "1";
         await UpdateAnimalList();
+        Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
+        Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
         StateHasChanged();
     }
 

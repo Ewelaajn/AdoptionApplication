@@ -30,7 +30,7 @@ namespace AdoptionApplication.Server.Services.Animals
             var query = _dataContext.Animals.AsNoTracking()
                 .OrderBy(x => x.Id).AsQueryable();
             
-            query = PrepareQuery(query, isAdopted, city, province);
+            query = PrepareQuery(query, isAdopted, city, province, default);
             var total = await query.CountAsync();
             query = ApplyPagination(query, page);
             
@@ -44,7 +44,7 @@ namespace AdoptionApplication.Server.Services.Animals
             var query = _dataContext.Animals.AsNoTracking()
                 .OrderBy(x => x.Id).AsQueryable();
 
-            query = PrepareQuery(query, isAdopted, city, province);
+            query = PrepareQuery(query, isAdopted, city, province, species.Id);
             var total = await query.CountAsync();
             query = ApplyPagination(query, page);
 
@@ -52,14 +52,16 @@ namespace AdoptionApplication.Server.Services.Animals
         }
 
         private IQueryable<Animal> PrepareQuery(IQueryable<Animal> query, bool? isAdopted, string? city,
-            string? province)
+            string? province, int? speciesId)
         {
             if (isAdopted.HasValue)
                 query = query.Where(x => x.IsAdopted == isAdopted);
-            else if (!string.IsNullOrWhiteSpace(city))
+            if (!string.IsNullOrWhiteSpace(city))
                 query = query.Where(x => x.City == city);
-            else if (!string.IsNullOrWhiteSpace(province))
+            if (!string.IsNullOrWhiteSpace(province))
                 query = query.Where(x => x.Province == province);
+            if (speciesId.HasValue)
+                query = query.Where(x => x.SpeciesId == speciesId);
 
             return query.Where(x => x.Deleted == false);
         }
