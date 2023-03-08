@@ -55,32 +55,36 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
 
         public async Task<UserAdoptionForm> GetUserAdoptionFormAsync(int id)
         {
-            var form = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Id == id);
+            var form = await _dataContext.AdoptionForms.AsNoTracking()
+                .Include(x => x.Animal)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (form == null)
                 return null;
 
             return form;
         }
 
-        public async Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page, string? email, int? animalId)
+        public async Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page, string? email, int? animalId, string status)
         {
             var query = _dataContext.AdoptionForms.AsNoTracking()
                 .Include(x => x.Animal)
                 .OrderBy(x => x.Id)
                 .Where(x => x.Deleted == false);
-            query = PrepareQuery(query, email, animalId);
+            query = PrepareQuery(query, email, animalId, status);
             var total = await query.CountAsync();
             query = ApplyPagination(query, page);
             
             return new BatchAdoptionForm { Total = total, AdoptionForms = await query.ToListAsync() };
         }
         
-        private IQueryable<UserAdoptionForm> PrepareQuery(IQueryable<UserAdoptionForm> query, string? email, int? animalId)
+        private IQueryable<UserAdoptionForm> PrepareQuery(IQueryable<UserAdoptionForm> query, string? email, int? animalId, string status)
         {
             if (!string.IsNullOrWhiteSpace(email))
                 query = query.Where(x => x.Email == email);
             if (animalId.HasValue)
                 query = query.Where(x => x.AnimalId == animalId);
+            if(!string.IsNullOrWhiteSpace(status))
+                query = query.Where(x => x.Status == status);
 
             return query;
         }

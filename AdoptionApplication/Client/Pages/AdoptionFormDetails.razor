@@ -1,0 +1,124 @@
+﻿@page "/animal/adoptionForm/{id}"
+@using Microsoft.Extensions.Primitives
+@inject NavigationManager NavigationManager
+@inject IAdoptionFormService AdoptionFormService
+@inject IToastService ToastService
+
+
+
+@if (Form != null)
+{
+  <div class="container shadow p-3 mb-5 bg-white rounded">
+        <h1 class="card-header text-center mr-2 mb-2">Formularz adopcyjny</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="custom-media">
+                    <img class="custom-media-img" src="@Form.Animal.Image" alt="@Form.Animal.Name"/>
+                    <h4 class="custom-h4">@Form.Animal.Name</h4>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Imię:</label>
+                        <input type="text" class="form-control" value="@Form.FirstName" disabled/>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Nazwisko:</label>
+                        <input type="text" class="form-control" value="@Form.LastName" disabled/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" value="@Form.Email" disabled/>
+                </div>
+                <div class="form-group">
+                    <label>Numer telefonu:</label>
+                    <input type="tel" class="form-control" value="@Form.PhoneNumber" disabled/>
+                </div>
+                <div class="form-group">
+                    <label>Wiek:</label>
+                    <input type="text" class="form-control" value="@Form.Age" disabled/>
+                </div>
+                <div class="form-group">
+                    <label>O mnie:</label>
+                    <textarea class="form-control" rows="3" disabled>@Form.AboutMe</textarea>
+                </div>
+                <div class="form-group">
+                    <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Status
+                                </button>
+                                <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
+                                    @foreach (var status in AdoptionFormStatusConstants.All)
+                                    {
+                                        <button class="dropdown-item" @onclick="() => UpdateFormStatus(status)">@status</button>
+                                    }
+                                </div>
+                                <p>@Form.Status</p>
+                            </div>
+                    <div class="form-group mr-2 mb-2">
+                        @if (StartingStatus != null && Form.Status != StartingStatus)
+                        {
+                            <button class="btn btn-custom" @onclick="() => UpdateStatus()">Aktualizuj</button>
+                        }
+                        <a href="/" class="btn btn-custom ml-2" @onclick="Return">Wyjdź</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <h1 class="card-header">Nie znaleziono takiego formularza</h1>
+}
+
+@code {
+    public UserAdoptionForm Form { get; set; } = new UserAdoptionForm{
+        Id = 0, Status = AdoptionFormStatusConstants.New, AnimalId = 0, Animal = new Animal{Id = 0}};
+    [Parameter]
+    public string Id { get; set; }
+
+    public string StartingStatus { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var form = await AdoptionFormService.GetForm(Int32.Parse(Id));
+        StartingStatus = form.Status;
+        Form = form;
+    }
+
+    private void UpdateFormStatus(string status)
+    {
+        Form.Status = status;
+    }
+    
+    private async Task UpdateStatus()
+    {
+        try
+        {
+            var result = await AdoptionFormService.ChangeStatus(Form);
+            if (result != null)
+            {
+                ToastService.ShowSuccess("Pomyślnie zaktualizowano formularz.");
+                await Task.Delay(1000);
+                NavigationManager.NavigateTo($"/animal/adoptionForm/{Id}");
+            }
+            else
+            {
+                ToastService.ShowError("Coś poszło nie tak podczas aktualizowania formularza. Spróbuj ponownie później.");
+                await Task.Delay(1000);
+                NavigationManager.NavigateTo($"/animal/adoptionForm/all");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("Coś poszło nie tak podczas aktualizowania formularza. Spróbuj ponownie później.");
+            await Task.Delay(1000);
+            NavigationManager.NavigateTo($"/animal/adoptionForm/all");
+        }
+    }
+
+    private void Return() => NavigationManager.NavigateTo("/animal/adoptionForm/all");
+}

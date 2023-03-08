@@ -14,6 +14,8 @@ namespace AdoptionApplication.Client.Services.AdoptionFormService
             _httpClient = httpClient;
         }
 
+        public ICollection<UserAdoptionForm> AdoptionForms { get; set; } = new List<UserAdoptionForm>();
+
         public async Task<UserAdoptionForm> AddNewForm(UserAdoptionForm form)
         {
             var result = await _httpClient.PutAsJsonAsync("api/AdoptionForm", form);
@@ -29,19 +31,31 @@ namespace AdoptionApplication.Client.Services.AdoptionFormService
             }
         }
 
-        public Task<UserAdoptionForm> ChangeStatus(UserAdoptionForm form)
+        public async Task<UserAdoptionForm> ChangeStatus(UserAdoptionForm form)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.PutAsJsonAsync($"api/AdoptionForm/status", form);
+            if (!result.IsSuccessStatusCode)
+                return null;
+            else
+            {
+                var formStatusResult = await JsonSerializer.DeserializeAsync<UserAdoptionForm>(
+                    await result.Content.ReadAsStreamAsync());
+                return formStatusResult;
+            }
         }
 
-        public Task<BatchAdoptionForm> GetAllForms(int? page, string? email, int? animalId)
+        public async Task<int> GetAllForms(int? page, string? email, int? animalId, string status)
         {
-            throw new NotImplementedException();
+            var  result = await _httpClient.GetFromJsonAsync<BatchAdoptionForm>(
+                $"api/AdoptionForm?page={page}&email={email}&animalId={animalId}&status={status}");
+            AdoptionForms = result.AdoptionForms;
+
+            return result.Total;
         }
 
-        public Task<UserAdoptionForm> GetForm(int id)
+        public async Task<UserAdoptionForm> GetForm(int id)
         {
-            throw new NotImplementedException();
+            return await _httpClient.GetFromJsonAsync<UserAdoptionForm>($"api/AdoptionForm/{id}");
         }
     }
 }

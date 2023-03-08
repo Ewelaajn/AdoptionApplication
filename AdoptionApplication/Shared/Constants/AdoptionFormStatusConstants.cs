@@ -6,5 +6,7 @@
         public static string Rejected = "Odrzucony";
         public static string InProgress = "Adopcja w toku";
         public static string Finished = "Adopcja zakończona";
+
+        public static List<string> All = new() { New, Rejected, InProgress, Finished };
     }
 }
