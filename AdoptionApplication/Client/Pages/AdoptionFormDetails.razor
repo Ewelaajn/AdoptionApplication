@@ -1,81 +1,85 @@
 ﻿@page "/animal/adoptionForm/{id}"
-@using Microsoft.Extensions.Primitives
 @inject NavigationManager NavigationManager
 @inject IAdoptionFormService AdoptionFormService
 @inject IToastService ToastService
 
 
+<div class="text-center">
+  <h1 class="display-4">Formularz adopcyjny</h1>
+</div>
 
-@if (Form != null)
+@if (Form == null)
 {
-  <div class="container shadow p-3 mb-5 bg-white rounded">
-        <h1 class="card-header text-center mr-2 mb-2">Formularz adopcyjny</h1>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="custom-media">
-                    <img class="custom-media-img" src="@Form.Animal.Image" alt="@Form.Animal.Name"/>
-                    <h4 class="custom-h4">@Form.Animal.Name</h4>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Imię:</label>
-                        <input type="text" class="form-control" value="@Form.FirstName" disabled/>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Nazwisko:</label>
-                        <input type="text" class="form-control" value="@Form.LastName" disabled/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" class="form-control" value="@Form.Email" disabled/>
-                </div>
-                <div class="form-group">
-                    <label>Numer telefonu:</label>
-                    <input type="tel" class="form-control" value="@Form.PhoneNumber" disabled/>
-                </div>
-                <div class="form-group">
-                    <label>Wiek:</label>
-                    <input type="text" class="form-control" value="@Form.Age" disabled/>
-                </div>
-                <div class="form-group">
-                    <label>O mnie:</label>
-                    <textarea class="form-control" rows="3" disabled>@Form.AboutMe</textarea>
-                </div>
-                <div class="form-group">
-                    <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Status
-                                </button>
-                                <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
-                                    @foreach (var status in AdoptionFormStatusConstants.All)
-                                    {
-                                        <button class="dropdown-item" @onclick="() => UpdateFormStatus(status)">@status</button>
-                                    }
-                                </div>
-                                <p>@Form.Status</p>
-                            </div>
-                    <div class="form-group mr-2 mb-2">
-                        @if (StartingStatus != null && Form.Status != StartingStatus)
-                        {
-                            <button class="btn btn-custom" @onclick="() => UpdateStatus()">Aktualizuj</button>
-                        }
-                        <a href="/" class="btn btn-custom ml-2" @onclick="Return">Wyjdź</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p>Loading...</p>
 }
 else
 {
-    <h1 class="card-header">Nie znaleziono takiego formularza</h1>
+<div class="card card-img-top p-4">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@Form.Animal.Image" alt="Animal Image" class="card-img-top">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <form>
+                <div class="form-group">
+                    <label for="AnimalName">Animal Name:</label>
+                    <input type="text" class="form-control" id="AnimalName" value="@Form.Animal.Name" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="FirstName">First Name:</label>
+                    <input type="text" class="form-control" id="FirstName" value="@Form.FirstName" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="LastName">Last Name:</label>
+                    <input type="text" class="form-control" id="LastName" value="@Form.LastName" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="Email">Email:</label>
+                    <input type="email" class="form-control" id="Email" value="@Form.Email" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="PhoneNumber">Phone Number:</label>
+                    <input type="tel" class="form-control" id="PhoneNumber" value="@Form.PhoneNumber" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="Age">Age:</label>
+                    <input type="number" class="form-control" id="Age" value="@Form.Age" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="AboutMe">About Me:</label>
+                    <textarea class="form-control" id="AboutMe" readonly>@Form.AboutMe</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="Status">Status:</label>
+                    <select class="form-control" id="Status" @bind="@Form.Status">
+                        <option value="@Form.Status" selected>@Form.Status</option>
+                        @foreach (var status in AdoptionFormStatusConstants.All)
+                        {
+                            if (status != Form.Status)
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </form>
+            <div class="d-flex justify-content-end">
+                @if (StartingStatus != Form.Status)
+                {
+                    <button type="button" class="btn btn-primary mr-2" @onclick="UpdateStatus"><i class="fas fa-save"></i> Aktualizuj</button>
+                }
+                <a href="/" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Wyjdź</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 }
 
 @code {
-    public UserAdoptionForm Form { get; set; } = new UserAdoptionForm{
+    public UserAdoptionForm Form { get; set; } = new(){
         Id = 0, Status = AdoptionFormStatusConstants.New, AnimalId = 0, Animal = new Animal{Id = 0}};
     [Parameter]
     public string Id { get; set; }
@@ -87,11 +91,6 @@ else
         var form = await AdoptionFormService.GetForm(Int32.Parse(Id));
         StartingStatus = form.Status;
         Form = form;
-    }
-
-    private void UpdateFormStatus(string status)
-    {
-        Form.Status = status;
     }
     
     private async Task UpdateStatus()
