@@ -58,11 +58,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //if (AnimalService.Animals == null || AnimalService.Animals.Count == 0)
-        //{
-        //    AnimalService.LoadAnimalsAsync();
-        //}
-
         animal = await AnimalService.GetAnimalAsync(Id);
     }
 

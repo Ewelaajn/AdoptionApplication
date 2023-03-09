@@ -23,6 +23,10 @@
                 }
             </div>
         </div>
+        @if (city != null)
+        {
+            <p class="btn btn-secondary btn-light w-100">@city</p>
+        }
     </div>
     <div class="form-group col-md-3 col-lg-2">
         <div class="dropdown">
@@ -37,6 +41,10 @@
                 }
             </div>
         </div>
+        @if (province != null)
+        {
+            <p class="btn btn-secondary btn-light w-100">@province</p>
+        }
     </div>
     <div class="form-group col-md-3 col-lg-2">
         <div class="dropdown">
@@ -49,15 +57,23 @@
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.ToAdopt)">Szukające domu</button>
             </div>
         </div>
+        @if (isAdopted.HasValue && isAdopted == true)
+        {
+            <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.Adopted</p>
+        }
+        else if(isAdopted.HasValue && isAdopted == false)
+        {
+            <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.ToAdopt</p>
+        }
     </div>
 </div>
-<ul class="list-unstyled col-8"> 
+<ul class="list-unstyled col-8">
     <div class="add-animal-box">
-    <h2>
-        <a href="/animal/create">
-            Dodaj nowe zwierzę do adopcji
-        </a>
-    </h2>
+        <h2>
+            <a href="/animal/create" class="nav-link" style="cursor: pointer;">
+                Dodaj nowe zwierzę do adopcji
+            </a>
+        </h2>
     </div>
     @foreach (var animal in AnimalService.Animals)
     {
@@ -166,10 +182,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentPage = "1";
-        await UpdateAnimalList();
+        await AnimalService.LoadAnimalsAsyncForAll(null, null, null, null);
         Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
         Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
+        currentPage = "1";
+        await UpdateAnimalList();
         StateHasChanged();
     }
 

@@ -1,5 +1,263 @@
-﻿<h3>AdoptionFormsListUpdate</h3>
+﻿@page "/animal/adoptionForm/all"
+@inject IAdoptionFormService AdoptionFormService
+@inject NavigationManager NavigationManager
+
+<ul class="list-unstyled col-8">
+    <div class="shadow p-3 mb-5 bg-white rounded text-center my-5">
+        <h1>Formularze adopcyjne</h1>
+    </div>
+</ul>
+<div class="form-row">
+    <div class="form-group col-md-3 col-lg-2">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownCityButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Email
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownCityButton">
+                <button class="dropdown-item" @onclick="() => UpdateEmail(null)">Wszystkie</button>
+                @if (Emails.Count > 0)
+                {
+                    @foreach (var email in Emails)
+                    {
+                        <button class="dropdown-item" @onclick="() => UpdateEmail(email)">@email</button>
+                    }
+                }
+            </div>
+        </div>
+        @if (chooseEmail != null)
+        {
+            <p class="btn btn-secondary btn-light w-100">@chooseEmail</p>
+        }
+    </div>
+    <div class="form-group col-md-3 col-lg-2">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownProvinceButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Zwierzę
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownProvinceButton">
+                <button class="dropdown-item" @onclick="() => UpdateAnimal(null)">Wszystkie</button>
+                @if (Animals.Count > 0)
+                {
+                    @foreach (var animal in Animals)
+                    {
+                        <button class="dropdown-item custom-dropdown-item" @onclick="() => UpdateAnimal(animal)">
+                            <div class="img-wrapper">
+                                <img src="@animal?.Image" alt="Animal Image" class="img-thumbnail custom-img-thumbnail">
+                            </div>
+                            <div class="name-wrapper">
+                                <div class="name">@animal?.Name</div>
+                            </div>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+        @if (chooseAnimal != null)
+        {
+            <p class="btn btn-secondary btn-light w-auto">
+                 <div class="img-wrapper">
+                     <img src="@chooseAnimal?.Image" alt="Animal Image" class="img-thumbnail custom-img-thumbnail">
+                 </div>
+                <div class="name-wrapper">
+                    <div class="name">@chooseAnimal?.Name</div>
+                </div>
+            </p>
+        }
+    </div>
+    <div class="form-group col-md-3 col-lg-2">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownAdoptionStatusButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Status
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownAdoptionStatusButton">
+                <button class="dropdown-item" @onclick="() => UpdateFormStatus(null)">Wszystkie</button>
+                @foreach (var status in AdoptionFormStatusConstants.All)
+                {
+                    <button class="dropdown-item" @onclick="() => UpdateFormStatus(status)">@status</button>
+                }
+            </div>
+        </div>
+        @if (formStatus != null)
+        {
+            <p class="btn btn-secondary btn-light w-100">@formStatus</p>
+        }
+    </div>
+</div>
+<ul class="list-unstyled custom-list">
+    @foreach (var form in AdoptionFormService.AdoptionForms)
+    {
+        <li class="media my-3 custom-media col-8 ">
+            <div class="media-img-wrapper mr-3 custom-media-img-wrapper">
+                <a href="/animal/@(form.Animal?.Id)">
+                    <img class="media-img custom-media-img" src="@form.Animal?.Image" alt="@form.Animal?.Name" />
+                </a>
+            </div>
+            <div class="media-body custom-media-body">
+                <div class="card-text person-info">
+                    <strong>Imię i nazwisko:</strong> @form.FirstName @form.LastName
+                </div>
+                <div class="card-text person-info">
+                    <strong>Email:</strong> @form.Email
+                </div>
+                <div class="card-text person-info">
+                    <strong>Wiek:</strong> @form.Age
+                </div>
+                <div class="card-text person-info">
+                    <strong>Status:</strong> <span>@form.Status</span>
+                </div>
+                <div class="card-text person-info">
+                    <strong>Data utworzenia:</strong> @form.CreateDate?.ToShortDateString()
+                </div>
+                <div class="d-flex align-items-center mt-3">
+                    <a href="/animal/adoptionForm/@form.Id" class="btn btn-lg btn-outline-secondary ml-auto">
+                        <i class="fas fa-eye"></i> Zobacz
+                    </a>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+
+<Pagination>
+    <PaginationItem Disabled="@IsPageNavigationDisabled(PREVIOUS)" @onclick="Previous">
+        <PaginationLink>
+            <span aria-hidden="true">«</span>
+        </PaginationLink>
+    </PaginationItem>
+    @{
+        for (var i = 1; i <= pageItems; i++)
+        {
+            var pageNumberAsString = i.ToString();
+            <PaginationItem @key="pageNumberAsString" Active="@IsActive(pageNumberAsString)">
+                <PaginationLink Page="@pageNumberAsString" Clicked="SetActive">
+                    @pageNumberAsString
+                </PaginationLink>
+            </PaginationItem>
+        }
+    }
+    <PaginationItem Disabled="@IsPageNavigationDisabled(NEXT)" @onclick="Next">
+        <PaginationLink>
+            <span aria-hidden="true">»</span>
+        </PaginationLink>
+    </PaginationItem>
+</Pagination>
 
 @code {
+    public List<UserAdoptionForm> Forms { get; set; } = new()
+    { 
+        new()
+        {
+            Id = 0, 
+            Status = AdoptionFormStatusConstants.New, 
+            AnimalId = 0, 
+            Animal = new Animal{Id = 0}
+        }
+    };
+    public List<string?> Emails { get; set; } = new();
+    public List<Animal?> Animals { get; set; } = new() {new Animal{Id = 0}};
     
+    private string currentPage = "1";
+    private const string PREVIOUS = "previous";
+    private const string NEXT = "next";
+    private int pageItems = 1;
+
+    private string? formStatus;
+    private string? chooseEmail;
+    private Animal? chooseAnimal;
+
+    private async Task UpdateForms()
+    {
+        var total = await AdoptionFormService.GetAllForms(Int32.Parse(currentPage), chooseEmail, chooseAnimal?.Id, formStatus);
+        pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AdoptionFormService.GetAllForms(null, null, null, null);
+        Animals = AdoptionFormService.AdoptionForms
+            .DistinctBy(x => x.AnimalId)
+            .Select(x => x.Animal)
+            .ToList();
+        Emails = AdoptionFormService.AdoptionForms
+            .DistinctBy(x => x.Email)
+            .Select(x => x.Email)
+            .ToList();
+        StateHasChanged();
+        currentPage = "1";
+        await UpdateForms();
+    }
+      
+    private bool IsPageNavigationDisabled(string navigation)
+    {
+        if (navigation.Equals(PREVIOUS))
+        {
+            return currentPage.Equals("1");
+        }
+        else if (navigation.Equals(NEXT))
+        {
+            return currentPage.Equals(pageItems.ToString());
+        }
+        return false;
+    }
+
+    private async Task Previous()
+      {
+          var currentPageAsInt = int.Parse(currentPage);
+          if (currentPageAsInt > 1)
+          {
+              currentPage = (currentPageAsInt - 1).ToString();
+              await UpdateForms();
+          }
+      }
+    
+      private async Task Next()
+      {
+          var currentPageAsInt = int.Parse(currentPage);
+          if (currentPageAsInt < pageItems)
+          {
+              currentPage = (currentPageAsInt + 1).ToString();
+              await UpdateForms();
+          }
+      }
+    
+      private async Task SetActive(string page)
+      {
+          currentPage = page;
+          await UpdateForms();
+      }
+
+    private bool IsActive(string page)
+    {
+        return currentPage == page;
+    }
+      
+      protected async Task UpdateFormStatus(string? status)
+      {
+          if (string.IsNullOrWhiteSpace(status))
+          {
+              formStatus = null;
+              await UpdateForms();
+              StateHasChanged();
+          }
+          else
+          {
+            formStatus = status;
+            await UpdateForms();
+            StateHasChanged();
+          }
+      }
+    
+      protected async Task UpdateEmail(string? chosenEmail)
+      {
+          chooseEmail = chosenEmail;
+          await UpdateForms();
+          StateHasChanged();
+      }
+      
+      protected async Task UpdateAnimal(Animal? chosenAnimal)
+      {
+          chooseAnimal = chosenAnimal;
+          await UpdateForms();
+          StateHasChanged();
+      }
 }

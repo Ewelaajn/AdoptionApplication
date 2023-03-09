@@ -29,7 +29,10 @@ else
                     <button class="dropdown-item" @onclick="() => UpdateCity(city)">@city</button>
                 }
             </div>
-            <p>@city</p>
+            @if (city != null)
+            {
+                <p class="btn btn-secondary btn-light w-100">@city</p>
+            }
         </div>
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -44,7 +47,10 @@ else
                     <button class="dropdown-item" @onclick="() => UpdateProvince(province)">@province</button>
                 }
             </div>
-            <p>@province</p>
+            @if (province != null)
+            {
+                <p class="btn btn-secondary btn-light w-100">@province</p>
+            }
         </div>
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -59,11 +65,11 @@ else
             </div>
             @if (isAdopted.HasValue && isAdopted == true)
             {
-                <p>@AdoptionStatusConstants.Adopted</p>
+                <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.Adopted</p>
             }
             else if(isAdopted.HasValue && isAdopted == false)
             {
-                <p>@AdoptionStatusConstants.ToAdopt</p>
+                <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.ToAdopt</p>
             }
         </div>
     </div>
@@ -113,13 +119,16 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        currentPage = "1";
+
+        await AnimalService.LoadAnimalsAsync(null, null, null, null);
         province = null;
         isAdopted = null;
         city = null;
-        await UpdateAnimalList();
+        
         Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
         Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
+        await UpdateAnimalList();
+        currentPage = "1";
 
         if (SpeciesUrl != null)
             species = SpeciesService.Species.FirstOrDefault(x => x.Url.ToLower().Equals(SpeciesUrl.ToLower()));
