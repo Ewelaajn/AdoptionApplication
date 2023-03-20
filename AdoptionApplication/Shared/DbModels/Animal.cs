@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Shared
 {
-    public class Animal
+    public class Animal : BasicResponse
     {
         public int Id { get; set; }
         public string? Name { get; set; }

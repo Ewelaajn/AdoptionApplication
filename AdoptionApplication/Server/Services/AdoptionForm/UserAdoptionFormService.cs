@@ -20,11 +20,12 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
 
         public async Task<UserAdoptionForm> UpsertUserForm(UserAdoptionForm newForm)
         {
-            var validation = _validator.Validate(newForm);
+            var validation = await _validator.ValidateAsync(newForm);
             if (!validation.IsValid)
-                return null;
+                return new UserAdoptionForm{ErrorMessage = string.Join(", ", validation.Errors.Select(x => x.ErrorMessage).ToList())};
 
-            var alreadyExists = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Email == newForm.Email && x.AnimalId == newForm.AnimalId);
+            var alreadyExists = await _dataContext.AdoptionForms
+                .FirstOrDefaultAsync(x => x.Email == newForm.Email && x.AnimalId == newForm.AnimalId);
             if (alreadyExists != null)
                 return newForm;
 
@@ -40,13 +41,16 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             var form = await _dataContext.AdoptionForms.FirstOrDefaultAsync(x => x.Id == id);
 
             if (form == null)
-                return null;
+                return new UserAdoptionForm{ErrorMessage = "Formularz nie znaleziony"};
 
             form.Status = status;
             if(status == AdoptionFormStatusConstants.Finished)
             {
                 var animal = await _dataContext.Animals.FirstOrDefaultAsync(x => x.Id == form.AnimalId);
-                animal.IsAdopted = true;
+                if (animal != null)
+                    animal.IsAdopted = true;
+                else
+                    form.ErrorMessage = "Zwierzę dla tego formularza nie istnieje";
             }
             await _dataContext.SaveChangesAsync();
 
@@ -58,10 +62,7 @@ namespace AdoptionApplication.Server.Services.AdoptionForm
             var form = await _dataContext.AdoptionForms.AsNoTracking()
                 .Include(x => x.Animal)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (form == null)
-                return null;
-
-            return form;
+            return form ?? new UserAdoptionForm{ErrorMessage = "Formularz nie znaleziony"};
         }
 
         public async Task<BatchAdoptionForm> GetUserAdoptionFormsAsync(int? page, string? email, int? animalId, string status)

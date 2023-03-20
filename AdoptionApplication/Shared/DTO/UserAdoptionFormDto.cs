@@ -1,6 +1,6 @@
 ﻿namespace AdoptionApplication.Shared.DTO
 {
-    public class UserAdoptionFormDto
+    public class UserAdoptionFormDto : BasicResponse
     {
         public int Id { get; set; }
         public Animal Animal { get; set; }

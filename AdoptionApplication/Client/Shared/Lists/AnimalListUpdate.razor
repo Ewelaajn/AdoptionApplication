@@ -23,9 +23,9 @@
                 }
             </div>
         </div>
-        @if (city != null)
+        @if (_city != null)
         {
-            <p class="btn btn-secondary btn-light w-100">@city</p>
+            <p class="btn btn-secondary btn-light w-100">@_city</p>
         }
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -41,9 +41,9 @@
                 }
             </div>
         </div>
-        @if (province != null)
+        @if (_province != null)
         {
-            <p class="btn btn-secondary btn-light w-100">@province</p>
+            <p class="btn btn-secondary btn-light w-100">@_province</p>
         }
     </div>
     <div class="form-group col-md-3 col-lg-2">
@@ -57,11 +57,11 @@
                 <button class="dropdown-item" @onclick="() => UpdateAdoptionStatus(AdoptionStatusConstants.ToAdopt)">Szukające domu</button>
             </div>
         </div>
-        @if (isAdopted.HasValue && isAdopted == true)
+        @if (_isAdopted.HasValue && _isAdopted == true)
         {
             <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.Adopted</p>
         }
-        else if(isAdopted.HasValue && isAdopted == false)
+        else if(_isAdopted.HasValue && _isAdopted == false)
         {
             <p class="btn btn-secondary btn-light w-100">@AdoptionStatusConstants.ToAdopt</p>
         }
@@ -151,7 +151,7 @@
         </PaginationLink>
     </PaginationItem>
     @{
-        for (var i = 1; i <= pageItems; i++)
+        for (var i = 1; i <= _pageItems; i++)
         {
             var pageNumberAsString = i.ToString();
             <PaginationItem @key="pageNumberAsString" Active="@IsActive(pageNumberAsString)">
@@ -169,13 +169,13 @@
 </Pagination>
 
 @code {
-    private string currentPage = "1";
+    private string _currentPage = "1";
     private const string PREVIOUS = "previous";
     private const string NEXT = "next";
-    private int pageItems = 1;
-    private bool? isAdopted;
-    private string? city;
-    private string? province;
+    private int _pageItems = 1;
+    private bool? _isAdopted;
+    private string? _city;
+    private string? _province;
 
     public List<string?> Provinces { get; set; } = new();
     public List<string?> Cities { get; set; } = new();
@@ -185,58 +185,58 @@
         await AnimalService.LoadAnimalsAsyncForAll(null, null, null, null);
         Provinces = AnimalService.Animals.Select(x => x.Province).Distinct().ToList();
         Cities = AnimalService.Animals.Select(x => x.City).Distinct().ToList();
-        currentPage = "1";
+        _currentPage = "1";
         await UpdateAnimalList();
         StateHasChanged();
     }
 
     private async Task UpdateAnimalList()
     {
-        var total = await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(currentPage), isAdopted, city, province);
-        pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
+        var total = await AnimalService.LoadAnimalsAsyncForAll(Int32.Parse(_currentPage), _isAdopted, _city, _province);
+        _pageItems = (int)Math.Round(total / (decimal) PaginationService.PageItems, MidpointRounding.ToPositiveInfinity);
     }
 
     private bool IsActive(string page)
     {
-        return currentPage == page;
+        return _currentPage == page;
     }
 
     private bool IsPageNavigationDisabled(string navigation)
     {
         if (navigation.Equals(PREVIOUS))
         {
-            return currentPage.Equals("1");
+            return _currentPage.Equals("1");
         }
         else if (navigation.Equals(NEXT))
         {
-            return currentPage.Equals(pageItems.ToString());
+            return _currentPage.Equals(_pageItems.ToString());
         }
         return false;
     }
 
     private async Task Previous()
     {
-        var currentPageAsInt = int.Parse(currentPage);
+        var currentPageAsInt = int.Parse(_currentPage);
         if (currentPageAsInt > 1)
         {
-            currentPage = (currentPageAsInt - 1).ToString();
+            _currentPage = (currentPageAsInt - 1).ToString();
             await UpdateAnimalList();
         }
     }
 
     private async Task Next()
     {
-        var currentPageAsInt = int.Parse(currentPage);
-        if (currentPageAsInt < pageItems)
+        var currentPageAsInt = int.Parse(_currentPage);
+        if (currentPageAsInt < _pageItems)
         {
-            currentPage = (currentPageAsInt + 1).ToString();
+            _currentPage = (currentPageAsInt + 1).ToString();
             await UpdateAnimalList();
         }
     }
 
     private async Task SetActive(string page)
     {
-        currentPage = page;
+        _currentPage = page;
         await UpdateAnimalList();
     }
     
@@ -244,7 +244,7 @@
     {
         if (string.IsNullOrWhiteSpace(status))
         {
-            isAdopted = null;
+            _isAdopted = null;
             await UpdateAnimalList();
             StateHasChanged();
         }
@@ -252,19 +252,19 @@
         {
             if (status.Equals(AdoptionStatusConstants.Adopted))
             {
-                isAdopted = true;
+                _isAdopted = true;
                 await UpdateAnimalList();
                 StateHasChanged();
             }
             else if (status.Equals(AdoptionStatusConstants.ToAdopt))
             {
-                isAdopted = false;
+                _isAdopted = false;
                 await UpdateAnimalList();
                 StateHasChanged();
             }
             else
             {
-                isAdopted = null;
+                _isAdopted = null;
                 await UpdateAnimalList();
                 StateHasChanged();
             }
@@ -273,14 +273,14 @@
 
     protected async Task UpdateCity(string? chosenCity)
     {
-        city = chosenCity;
+        _city = chosenCity;
         await UpdateAnimalList();
         StateHasChanged();
     }
     
     protected async Task UpdateProvince(string? chosenProvince)
     {
-        province = chosenProvince;
+        _province = chosenProvince;
         await UpdateAnimalList();
         StateHasChanged();
     }
@@ -296,7 +296,7 @@
         }
         catch (Exception ex)
         {
-            ToastService.ShowError("Coś poszło nie tak, spróbuj ponownie.");
+            ToastService.ShowError("Coś poszło nie tak, spróbuj ponownie później.");
         }
     }
 }

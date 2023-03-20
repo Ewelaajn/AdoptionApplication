@@ -50,14 +50,22 @@
     {
         try
         {
-            await SpeciesService.DeleteSpecies(id);
-            ToastService.ShowSuccess("Pomyślne usunięto gatunek.");
-            await Task.Delay(1500);
-            NavigationManager.NavigateTo(NavigationManager.Uri, true);
+            var result = await SpeciesService.DeleteSpecies(id);
+            if (string.IsNullOrWhiteSpace(result?.ErrorMessage))
+            {
+                ToastService.ShowSuccess("Pomyślne usunięto gatunek.");
+                await Task.Delay(1500);
+                NavigationManager.NavigateTo(NavigationManager.Uri, true);
+            }
+            else
+            {
+                ToastService.ShowError(result.ErrorMessage);
+                await Task.Delay(1500);
+            }
         }
         catch (Exception ex)
         {
-            ToastService.ShowError("Coś poszło nie tak, spróbuj ponownie później.");
+            ToastService.ShowError(ex.Message);
             await Task.Delay(1000);
             NavigationManager.NavigateTo("/");
         }

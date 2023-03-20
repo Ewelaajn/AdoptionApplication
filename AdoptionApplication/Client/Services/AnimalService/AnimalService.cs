@@ -20,17 +20,11 @@ namespace AdoptionApplication.Client.Services.AnimalService
         public List<string> Genders { get; set; } = new List<string> { GenderContants.Male, GenderContants.Female, GenderContants.Undefined };
 
         public event Action OnChange;
-        public async Task<Animal> AddNewAnimal(Animal newAnimal)
+        public async Task<Animal?> AddNewAnimal(Animal? newAnimal)
         {
             var result = await _httpClient.PutAsJsonAsync("api/Animal", newAnimal);
-
-            if (!result.IsSuccessStatusCode)
-                return null;
-            else
-            {
-                var animalResult = await JsonSerializer.DeserializeAsync<Animal>(await result.Content.ReadAsStreamAsync());
-                return animalResult;
-            }
+            var animalResult = await JsonSerializer.DeserializeAsync<Animal>(await result.Content.ReadAsStreamAsync());
+             return animalResult;
         }
 
         public async Task DeleteAnimal(int id)
@@ -40,33 +34,33 @@ namespace AdoptionApplication.Client.Services.AnimalService
                 throw new Exception(result.ReasonPhrase);
         }
 
-        public async Task<Animal> GetAnimalAsync(int id)
+        public async Task<Animal?> GetAnimalAsync(int id)
         => await _httpClient.GetFromJsonAsync<Animal>($"api/Animal/{id}");
 
         public async Task<int> LoadAnimalsAsync(int? page, bool? isAdopted, string? city, string? province, string speciesUrl = null)
         {
-            BatchAnimal result;
+            BatchAnimal? result;
             if (string.IsNullOrEmpty(speciesUrl))
             {
                 result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
-                Animals = result.Animals;
+                Animals = result?.Animals ?? new List<Animal>();
             }
             else
             {
                 result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal/Species/{speciesUrl}?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
-                Animals = result.Animals;
+                Animals = result?.Animals ?? new List<Animal>();
             }
                 
             OnChange.Invoke();
-            return result.Total;
+            return result?.Total ?? 0;
         }
 
         public async Task<int> LoadAnimalsAsyncForAll(int? page, bool? isAdopted, string? city, string? province)
         {
             var result = await _httpClient.GetFromJsonAsync<BatchAnimal>($"api/Animal?page={page}&isAdopted={isAdopted}&city={city}&province={province}");
-            Animals = result.Animals;
+            Animals = result?.Animals ?? new List<Animal>();
             
-            return result.Total;
+            return result?.Total ?? 0;
         }
     }
 }

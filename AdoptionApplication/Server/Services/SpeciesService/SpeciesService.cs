@@ -25,12 +25,16 @@ namespace AdoptionApplication.Server.Services.SpeciesService
         public async Task<Species> GetSpeciesByUrlAsync(string speciesUrl)
         {
             return await _dataContext.Species.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower() && x.Deleted == false);
+                .FirstOrDefaultAsync(x => x.Url.ToLower() == speciesUrl.ToLower() && x.Deleted == false) 
+                   ?? new Species{ErrorMessage = "Gatunek nie odnaleziony"};
         }
 
         public async Task<Species> GetSingleSpeciesAsync(int id)
         {
-            var species = await _dataContext.Species.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var species = await _dataContext.Species
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(x => x.Id == id) 
+                          ?? new Species{ErrorMessage = "Gatunek nie odnaleziony"};
             return species;
         }
 
@@ -40,9 +44,8 @@ namespace AdoptionApplication.Server.Services.SpeciesService
             {
                 var validation = _validator.Validate(species);
                 if (!validation.IsValid)
-                    return null;
-
-
+                    return new Species{ErrorMessage = string.Join(", ", validation.Errors.Select(x => x.ErrorMessage).ToList())};
+                
                 if (species.Id > 0)
                 {
                     var dbSpecies = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == species.Id);
@@ -74,16 +77,24 @@ namespace AdoptionApplication.Server.Services.SpeciesService
             }
             catch (Exception ex)
             {
-                throw (ex);
+                return new Species { ErrorMessage = ex.Message };
             }
         }
 
-        public async Task DeleteSpecies(int id)
+        public async Task<Species> DeleteSpecies(int id)
         {
-            var species = await _dataContext.Species.FirstOrDefaultAsync(x => x.Id == id);
-            if (species == null) return;
+            var species = await _dataContext.Species
+                .Include(x => x.Animals.Where(x => x.Deleted == false))
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (species == null)
+                return new Species();
+            if (species.Animals != null && species.Animals.Any())
+                return new Species { ErrorMessage = "Nie można usunąć gatunku, który jest przypisany do innych zwierząt" };
+            
             species.Deleted = true;
             await _dataContext.SaveChangesAsync();
+            return species;
         }
     }
 }

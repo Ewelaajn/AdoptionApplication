@@ -21,25 +21,27 @@ namespace AdoptionApplication.Server.Controllers
         public async Task<ActionResult<BatchAdoptionForm>> GetForms(
             [FromQuery] int? page, [FromQuery] int? animalId, [FromQuery] string? email, [FromQuery] string? status)
         {
-            var forms = await _userAdoptionFormService.GetUserAdoptionFormsAsync(page, email, animalId, status);
-            return Ok(forms);
+            var result = await _userAdoptionFormService.GetUserAdoptionFormsAsync(page, email, animalId, status);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<UserAdoptionForm>> GetForm(int id)
         {
-            var form = await _userAdoptionFormService.GetUserAdoptionFormAsync(id);
-            if (form == null)
-                return NotFound();
-            return Ok(form);
+            var result = await _userAdoptionFormService.GetUserAdoptionFormAsync(id);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
         }
 
         [HttpPut]
         public async Task<ActionResult<UserAdoptionForm>> AddNewForm([FromBody] UserAdoptionForm form)
         {
             var result = await _userAdoptionFormService.UpsertUserForm(form);
-            if(result == null)
-                return NotFound();
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
             return Ok(result);
         }
 
@@ -47,6 +49,8 @@ namespace AdoptionApplication.Server.Controllers
         public async Task<ActionResult<UserAdoptionForm>> UpdateFormStatus([FromBody] UserAdoptionForm form)
         {
             var result = await _userAdoptionFormService.ChangeFormStatus(form.Id, form.Status);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
             return Ok(result);
         }
     }

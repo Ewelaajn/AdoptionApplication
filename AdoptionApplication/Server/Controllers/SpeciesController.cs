@@ -19,35 +19,33 @@ namespace AdoptionApplication.Server.Controllers
         public async Task<ActionResult<ICollection<Species>>> GetSpecies()
         {
             var species = await _speciesService.GetSpeciesAsync();
-
             return Ok(species);
         }
         
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Species>> GetSingleSpecies(int id)
         {
-            var species = await _speciesService.GetSingleSpeciesAsync(id);
-            return Ok(species);
+            var result = await _speciesService.GetSingleSpeciesAsync(id);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
         }
 
         [HttpPut]
         public async Task<ActionResult<Species>> UpsertSpecies([FromBody] Species species)
         {
-            try
-            {
-                var result = await _speciesService.UpsertNewSpecies(species);
-                return Accepted(result);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest($"{ex.Message}, {ex.StackTrace}");
-            }
+            var result = await _speciesService.UpsertNewSpecies(species);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Accepted(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSpecies(int id)
         {
-            await _speciesService.DeleteSpecies(id);
+            var result = await _speciesService.DeleteSpecies(id);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
             return Accepted();
         }
     }

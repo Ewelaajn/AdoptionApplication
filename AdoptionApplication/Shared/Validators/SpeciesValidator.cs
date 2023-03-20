@@ -6,9 +6,9 @@ namespace AdoptionApplication.Shared.Validators
     {
         public SpeciesValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.Url).NotEmpty();
-            RuleFor(x => x.Icon).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Nazwa nie może być pusta");
+            RuleFor(x => x.Url).NotEmpty().WithMessage("Url nie może być pusty");
+            RuleFor(x => x.Icon).NotEmpty().WithMessage("Ikona nie może być pusta");
         }
     }
 }

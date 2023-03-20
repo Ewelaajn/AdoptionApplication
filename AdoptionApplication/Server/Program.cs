@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Validators;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +42,11 @@ else
 }
 
 app.UseHttpsRedirection();
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                       ForwardedHeaders.XForwardedProto
+});  
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
