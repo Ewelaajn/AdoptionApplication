@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Shared
 {
-    public partial class UserAdoptionForm
+    public class UserAdoptionForm: BasicResponse
     {
         public int Id { get; set; }
         [ForeignKey(nameof(Animal))]

@@ -1,22 +1,21 @@
 ﻿@page "/animal/create"
 @page "/animal/update/{id}"
-@using Blazored.Toast.Services;
 @inject ISpeciesService SpeciesService
 @inject IAnimalService AnimalService
 @inject IToastService ToastService
 
-@if (showErrorMessage)
+@if (_showErrorMessage)
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
-            @ErrorMessagesConstants.ValidationFailed
+            @NewAnimal.ErrorMessage
         </div>
         <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
             <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
         </button>
     </div>
 }
-else if (internalError)
+else if (_internalError)
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
@@ -27,10 +26,10 @@ else if (internalError)
         </button>
     </div>
 }
-else if (showSuccessMessage)
+else if (_showSuccessMessage)
 {
     
-        @if(newAnimal.Id > 0)
+        @if(NewAnimal.Id > 0)
         {
             <div class="alert alert-success" role="alert">
             Nowe zwierzę do adopcji zostało dodane!
@@ -39,7 +38,7 @@ else if (showSuccessMessage)
         else
         {
         <div class="alert alert-success" role="alert">
-            Zaktualizowano informacje o @newAnimal.Name
+            Zaktualizowano informacje o @NewAnimal.Name
         </div>
         }
 }
@@ -59,8 +58,8 @@ else if (showSuccessMessage)
             <form class="form" @onsubmit="AddAnimal">
                 <div class="form-group">
                     <label for="name">Imię:</label>
-                    <input type="text" class="form-control" id="name" @bind="@newAnimal.Name" required>
-                    @if (string.IsNullOrWhiteSpace(newAnimal.Name))
+                    <input type="text" class="form-control" id="name" @bind="@NewAnimal.Name" required>
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.Name))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -69,7 +68,7 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="gender">Płeć:</label>
-                    <select class="form-control" id="gender" @bind="@newAnimal.Gender">
+                    <select class="form-control" id="gender" @bind="@NewAnimal.Gender">
                         @foreach (var gender in AnimalService.Genders)
                         {
                             <option value="@gender">@gender</option>
@@ -78,8 +77,8 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="shortDescription">Krótki opis:</label>
-                    <input type="text" class="form-control" id="shortDescription" @bind="@newAnimal.ShortDescription">
-                    @if (string.IsNullOrWhiteSpace(newAnimal.ShortDescription))
+                    <input type="text" class="form-control" id="shortDescription" @bind="@NewAnimal.ShortDescription">
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.ShortDescription))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -88,8 +87,8 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="description">Opis:</label>
-                    <textarea class="form-control" id="description" @bind="@newAnimal.Description"></textarea>
-                    @if (string.IsNullOrWhiteSpace(newAnimal.Description))
+                    <textarea class="form-control" id="description" @bind="@NewAnimal.Description"></textarea>
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.Description))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -98,7 +97,7 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="healthStatus">Stan zdrowia:</label>
-                    <select class="form-control" id="healthStatus" @bind="@newAnimal.HealthStatus">
+                    <select class="form-control" id="healthStatus" @bind="@NewAnimal.HealthStatus">
                         @foreach (var status in AnimalService.HealthStatuses)
                         {
                             <option value="@status">@status</option>
@@ -107,8 +106,8 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="city">Miasto:</label>
-                    <input type="text" class="form-control" id="city" @bind="@newAnimal.City">
-                    @if (string.IsNullOrWhiteSpace(newAnimal.City))
+                    <input type="text" class="form-control" id="city" @bind="@NewAnimal.City">
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.City))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -117,8 +116,8 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="province">Województwo:</label>
-                    <input type="text" class="form-control" id="province" @bind="@newAnimal.Province">
-                    @if (string.IsNullOrWhiteSpace(newAnimal.Province))
+                    <input type="text" class="form-control" id="province" @bind="@NewAnimal.Province">
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.Province))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -127,9 +126,9 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="imageUrl">Url zdjęcia:</label>
-                    <input type="text" class="form-control" id="imageUrl" @bind="@newAnimal.Image" required>
-                    <img src="@newAnimal.Image" alt="Podgląd zdjęcia" style="max-width:300px; max-height:300px;" onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Placeholder';">
-                    @if (string.IsNullOrWhiteSpace(newAnimal.Image))
+                    <input type="text" class="form-control" id="imageUrl" @bind="@NewAnimal.Image" required>
+                    <img src="@NewAnimal.Image" alt="Podgląd zdjęcia" style="max-width:300px; max-height:300px;" onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Placeholder';">
+                    @if (string.IsNullOrWhiteSpace(NewAnimal.Image))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -138,24 +137,24 @@ else if (showSuccessMessage)
                 </div>
                 <div class="form-group">
                     <label for="birthdate">Data urodzenia:</label>
-                    <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.DateOfBirth" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                    <input type="date" class="form-control" id="birthdate" @bind="@NewAnimal.DateOfBirth" max="@DateTime.Today.ToString("yyyy-MM-dd")">
                 </div>
                 <div class="form-group">
                     <label for="birthdate">Data adopcji:</label>
-                    <input type="date" class="form-control" id="birthdate" @bind="@newAnimal.AdoptionDate" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                    <input type="date" class="form-control" id="birthdate" @bind="@NewAnimal.AdoptionDate" max="@DateTime.Today.ToString("yyyy-MM-dd")">
                     <div class="invalid-feedback">
                           @ErrorMessagesConstants.AdoptionDateInfo
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="species">Gatunek:</label>
-                    <select class="form-control" id="species" @bind="@newAnimal.SpeciesId">
+                    <select class="form-control" id="species" @bind="@NewAnimal.SpeciesId">
                         @foreach (var species in SpeciesService.Species)
                         {
                             <option value="@species.Id">@species.Name</option>
                         }
                     </select>
-                    @if (newAnimal.SpeciesId == 0)
+                    @if (NewAnimal.SpeciesId == 0)
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -164,34 +163,34 @@ else if (showSuccessMessage)
                 </div>
                 <div>
                     <label>
-                        <input type="radio" name="adoption-status" checked="@(!newAnimal.IsAdopted)" @onchange="@(e => newAnimal.IsAdopted = false)">
+                        <input type="radio" name="adoption-status" checked="@(!NewAnimal.IsAdopted)" @onchange="@(e => NewAnimal.IsAdopted = false)">
                         Do adopcji
                     </label>
                     <label>
-                        <input type="radio" name="adoption-status" checked="@newAnimal.IsAdopted" @onchange="@(e => newAnimal.IsAdopted = true)">
+                        <input type="radio" name="adoption-status" checked="@NewAnimal.IsAdopted" @onchange="@(e => NewAnimal.IsAdopted = true)">
                         Adoptowany
                     </label>
                 </div>
-                @if (newAnimal.IsAdopted == null || newAnimal.SpeciesId == 0 || string.IsNullOrWhiteSpace(newAnimal.Image)
-                     || string.IsNullOrWhiteSpace(newAnimal.Province) || string.IsNullOrWhiteSpace(newAnimal.City)
-                     || newAnimal.HealthStatus == null || string.IsNullOrWhiteSpace(newAnimal.Description)
-                     || string.IsNullOrWhiteSpace(newAnimal.Name) || newAnimal.Gender == null)
+                @if (NewAnimal.IsAdopted == null || NewAnimal.SpeciesId == 0 || string.IsNullOrWhiteSpace(NewAnimal.Image)
+                     || string.IsNullOrWhiteSpace(NewAnimal.Province) || string.IsNullOrWhiteSpace(NewAnimal.City)
+                     || NewAnimal.HealthStatus == null || string.IsNullOrWhiteSpace(NewAnimal.Description)
+                     || string.IsNullOrWhiteSpace(NewAnimal.Name) || NewAnimal.Gender == null)
                 {
-                    formValid = false;
+                    _formValid = false;
                 }
                 else
                 {
-                    formValid = true;
+                    _formValid = true;
                 }
                 @if (string.IsNullOrWhiteSpace(@Id))
                 {
-                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
+                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!_formValid)">
                         <i class="fas fa-plus mr-2"></i> Dodaj
                     </button>
                 }
                 else
                 {
-                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!formValid)">
+                    <button type="submit" class="btn btn-lg btn-success" disabled="@(!_formValid)">
                         <i class="fas fa-plus mr-2"></i> Aktualizuj
                     </button>
                 }
@@ -202,11 +201,11 @@ else if (showSuccessMessage)
 
 
 @code {
-    public Animal newAnimal { get; set; } = new Animal();
-    private bool formValid = true;
-    private bool showErrorMessage = false;
-    private bool showSuccessMessage = false;
-    private bool internalError = false;
+    public Animal? NewAnimal { get; set; } = new Animal();
+    private bool _formValid = true;
+    private bool _showErrorMessage = false;
+    private bool _showSuccessMessage = false;
+    private readonly bool _internalError = false;
 
     [Inject]
     public NavigationManager Navigation { get; set; }
@@ -220,49 +219,50 @@ else if (showSuccessMessage)
 
         if(string.IsNullOrWhiteSpace(Id))
         {
-            newAnimal = new Animal
+            NewAnimal = new Animal
             {
                 Gender = GenderContants.Undefined,
-                HealthStatus = HealthStatusContants.Healthy
+                HealthStatus = HealthStatusContants.Healthy,
+                Description = "Opis: \nHistoria: \nOpieka: \nŻywienie:"
             };
         }
         else
         {
-            newAnimal = await AnimalService.GetAnimalAsync(Int32.Parse(Id));
+            NewAnimal = await AnimalService.GetAnimalAsync(Int32.Parse(Id));
         }
     }
 
     private async Task AddAnimal()
     {
-        if (formValid)
+        if (_formValid)
         {
             try
             {
                 StateHasChanged();
-                var result = await AnimalService.AddNewAnimal(newAnimal);
+                var result = await AnimalService.AddNewAnimal(NewAnimal);
 
-                if (result != null)
+                if (string.IsNullOrWhiteSpace(result?.ErrorMessage))
                 {
-                    showErrorMessage = false;
-                    showSuccessMessage = true;
+                    _showErrorMessage = false;
+                    _showSuccessMessage = true;
                     StateHasChanged();
                     await Task.Delay(2000);
                     ToastService.ShowSuccess("Operacja ukończona pomyślnie! Zmiany zostały wprowadzone");
                     Navigation.NavigateTo("/");
                 }
-                else if (result == null)
+                else if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
                 {
-                    showErrorMessage = true;
-                    showSuccessMessage = false;
+                    _showErrorMessage = true;
+                    _showSuccessMessage = false;
                     StateHasChanged();
                     await Task.Delay(2000);
-                    ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie.");
+                    ToastService.ShowError(result.ErrorMessage);
                     Navigation.NavigateTo("/");
                 }
             }
             catch (Exception ex)
             {
-                ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie.");
+                ToastService.ShowError(ex.Message);
                 await Task.Delay(2000);
                 Navigation.NavigateTo("/");
             }

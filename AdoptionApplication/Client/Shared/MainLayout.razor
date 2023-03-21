@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IIdentityService IdentityService
 <BlazoredToasts />
 <div class="page">
     <div class="sidebar">
@@ -7,15 +8,24 @@
     <main>
         <div class="top-row px-4">
             <div class="d-flex justify-content-start align-items-center">
-                <a href="/animal/all" class="custom-btn">
-                    Wszystkie zwierzęta
-                </a>
-                <a href="/animal/species/all" class="custom-btn">
-                    Wszystkie gatunki
-                </a>
-                <a href="/animal/adoptionForm/all" class="custom-btn">
-                    Formularze adopcyjne
-                </a>
+                @if (Ip == IpConstants.AdminIp)
+                {
+                    <a href="/animal/all" class="custom-btn">
+                        Wszystkie zwierzęta
+                    </a>
+                }
+                @if (Ip == IpConstants.AdminIp)
+                {
+                    <a href="/animal/species/all" class="custom-btn">
+                        Wszystkie gatunki
+                    </a>
+                }
+                @if (Ip == IpConstants.AdminIp)
+                {
+                    <a href="/animal/adoptionForm/all" class="custom-btn">
+                        Formularze adopcyjne
+                    </a>
+                }
             </div>
         </div>
 
@@ -24,3 +34,12 @@
         </article>
     </main>
 </div>
+
+@code{
+
+    private string Ip = null;
+    protected override async Task OnInitializedAsync()
+    {
+        Ip = await IdentityService.GetIp();
+    }
+}

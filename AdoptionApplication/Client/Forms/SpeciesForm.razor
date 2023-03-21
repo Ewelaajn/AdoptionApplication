@@ -3,18 +3,18 @@
 @inject ISpeciesService SpeciesService
 @inject IToastService ToastService
 
-@if (showErrorMessage)
+@if (_showErrorMessage)
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
-            @ErrorMessagesConstants.ValidationFailed
+            @_newSpecies.ErrorMessage
         </div>
         <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
             <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
         </button>
     </div>
 }
-else if (internalError)
+else if (_internalError)
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
@@ -25,7 +25,7 @@ else if (internalError)
         </button>
     </div>
 }
-else if (showSuccessMessage)
+else if (_showSuccessMessage)
 {
     <div class="alert alert-success" role="alert">
         Operacja przebiegła pomyślnie!
@@ -49,8 +49,8 @@ else
             <form class="form" @onsubmit="AddSpecies" @onchange="StateHasChanged">
                 <div class="form-group">
                     <label for="nazwa">Nazwa:</label>
-                    <input type="text" class="form-control form-control-lg" id="nazwa" @bind="@newSpecies.Name" required/>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Name))
+                    <input type="text" class="form-control form-control-lg" id="nazwa" @bind="@_newSpecies.Name" required/>
+                    @if (string.IsNullOrWhiteSpace(_newSpecies.Name))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -59,8 +59,8 @@ else
                 </div>
                 <div class="form-group">
                     <label for="url">Url:</label>
-                    <input type="text" class="form-control form-control-lg" id="url" @bind="@newSpecies.Url" required/>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Url))
+                    <input type="text" class="form-control form-control-lg" id="url" @bind="@_newSpecies.Url" required/>
+                    @if (string.IsNullOrWhiteSpace(_newSpecies.Url))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.EmptyField
@@ -69,8 +69,8 @@ else
                 </div>
                 <div class="form-group">
                     <label for="ikona">Ikona:</label>
-                    <input type="text" class="form-control form-control-lg" id="ikona" @bind="@newSpecies.Icon" required/>
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Icon))
+                    <input type="text" class="form-control form-control-lg" id="ikona" @bind="@_newSpecies.Icon" required/>
+                    @if (string.IsNullOrWhiteSpace(_newSpecies.Icon))
                     {
                         <div class="invalid-feedback">
                             @ErrorMessagesConstants.IkonFormInfo
@@ -78,24 +78,24 @@ else
                     }
                 </div>
                 <div class="text-center">
-                    @if (string.IsNullOrWhiteSpace(newSpecies.Icon) || string.IsNullOrWhiteSpace(newSpecies.Url)
-                         || string.IsNullOrWhiteSpace(newSpecies.Name))
+                    @if (string.IsNullOrWhiteSpace(_newSpecies.Icon) || string.IsNullOrWhiteSpace(_newSpecies.Url)
+                         || string.IsNullOrWhiteSpace(_newSpecies.Name))
                     {
-                        formValid = false;
+                        _formValid = false;
                     }
                     else
                     {
-                        formValid = true;
+                        _formValid = true;
                     }
                     @if (string.IsNullOrWhiteSpace(Id))
                     {
-                        <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
+                        <button type="submit" class="btn btn-custom" disabled="@(!_formValid)">
                             <span class="oi oi-plus"></span> Dodaj
                         </button>
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-custom" disabled="@(!formValid)">
+                        <button type="submit" class="btn btn-custom" disabled="@(!_formValid)">
                             <span class="oi oi-plus"></span> Aktualizuj
                         </button>
                     }
@@ -110,11 +110,11 @@ else
 }
 
 @code {
-    private Species newSpecies = new Species();
-    private bool formValid = true;
-    private bool showErrorMessage = false;
-    private bool showSuccessMessage = false;
-    private bool internalError = false;
+    private Species? _newSpecies = new Species();
+    private bool _formValid = true;
+    private bool _showErrorMessage = false;
+    private bool _showSuccessMessage = false;
+    private bool _internalError = false;
     [Parameter]
     public string Id { get; set; }
 
@@ -127,10 +127,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         if(string.IsNullOrWhiteSpace(Id))
-            newSpecies = new Species();
+            _newSpecies = new Species();
         else
         {
-            newSpecies = await SpeciesService.GetSpecies(Int32.Parse(Id));
+            _newSpecies = await SpeciesService.GetSpecies(Int32.Parse(Id));
         }
     }
 
@@ -138,33 +138,33 @@ else
     {
         try
         {
-            var result = await SpeciesService.UpsertSpecies(newSpecies);
-            if (result != null)
+            var result = await SpeciesService.UpsertSpecies(_newSpecies);
+            if (string.IsNullOrWhiteSpace(result?.ErrorMessage))
             {
-                showErrorMessage = false;
-                showSuccessMessage = true;
-                await BlazoredModal.CloseAsync(ModalResult.Ok(newSpecies.Name));
+                _showErrorMessage = false;
+                _showSuccessMessage = true;
+                await BlazoredModal.CloseAsync(ModalResult.Ok(_newSpecies.Name));
                 StateHasChanged();
                 ToastService.ShowSuccess("Aktualizacja gatunków przebiegła pomyślnie.");
                 await Task.Delay(1500);
                 Navigation.NavigateTo(Navigation.Uri, true);
             }
-            else if (result == null)
+            else if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
             {
-                showErrorMessage = true;
-                showSuccessMessage = false;
+                _showErrorMessage = true;
+                _showSuccessMessage = false;
                 StateHasChanged();
-                ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie później.");
+                ToastService.ShowError(result.ErrorMessage);
                 await Task.Delay(1500);
                 Navigation.NavigateTo("/");
                 await BlazoredModal.CancelAsync();
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            internalError = true;
+            _internalError = true;
             StateHasChanged();
-            ToastService.ShowError("Coś poszło nie tak. Spróbuj ponownie później.");
+            ToastService.ShowError(ex.Message);
             await Task.Delay(1500);
             Navigation.NavigateTo("/");
             await BlazoredModal.CancelAsync();

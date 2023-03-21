@@ -3,12 +3,12 @@
 @inject IAdoptionFormService AdoptionFormService
 @inject IToastService ToastService
 
-@if (animal != null)
+@if (_animal != null)
 {
     <div class="animal-details shadow p-1 mb-3 bg-white rounded text-center">
-        <h2 class="animal-name">Formularz adopcyjny @animal.Name</h2>
+        <h2 class="animal-name">Formularz adopcyjny @_animal.Name</h2>
     </div>
-    <img class="animal-image" src="@animal.Image" alt="@animal.Name" />
+    <img class="animal-image" src="@_animal.Image" alt="@_animal.Name" />
 }
 else
 {
@@ -17,11 +17,11 @@ else
     </div>
 }
 
-@if (showErrorMessage)
+@if (_showErrorMessage)
 {
     <div class="d-flex flex-column align-items-start">
         <div class="alert alert-danger mb-3 p-2 text-center">
-            @ErrorMessagesConstants.ValidationFailed
+            @_adoptionForm.ErrorMessage
         </div>
         <button class="btn btn-primary align-self-start px-4" onclick="location.reload()">
             <span class="d-flex align-items-center justify-content-center h-100">Odśwież</span>
@@ -39,13 +39,13 @@ else if (internalError)
         </button>
     </div>
 }
-else if (IsSubmitted)
+else if (_isSubmitted)
 {
     <div class="alert alert-success" role="alert">
         Formularz został wysłany!
     </div>
 }
-else if (IsSubmitting)
+else if (_isSubmitting)
 {
      <div class="alert alert-info" role="alert">
         Wysyłanie formularza...
@@ -58,8 +58,8 @@ else
         <form>
             <div class="form-group">
                 <label for="Imię">Imię:</label>
-                <input type="text" class="form-control" id="Imię" name="Imię" @bind="@adoptionForm.FirstName">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.FirstName))
+                <input type="text" class="form-control" id="Imię" name="Imię" @bind="@_adoptionForm.FirstName">
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.FirstName))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
@@ -68,8 +68,8 @@ else
             </div>
             <div class="form-group">
                 <label for="Nazwisko">Nazwisko:</label>
-                <input type="text" class="form-control" id="Nazwisko" name="Nazwisko" @bind="@adoptionForm.LastName">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.LastName))
+                <input type="text" class="form-control" id="Nazwisko" name="Nazwisko" @bind="@_adoptionForm.LastName">
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.LastName))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
@@ -78,8 +78,8 @@ else
             </div>
             <div class="form-group">
                 <label for="Wiek">Wiek:</label>
-                <input type="number" class="form-control" id="Wiek" name="Wiek" @bind="@adoptionForm.Age">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.Age))
+                <input type="number" class="form-control" id="Wiek" name="Wiek" @bind="@_adoptionForm.Age">
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.Age))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.AgeFormInfo
@@ -88,8 +88,8 @@ else
             </div>
             <div class="form-group">
                 <label for="Email">Email:</label>
-                <input type="email" class="form-control" id="Email" name="Email" @bind="@adoptionForm.Email">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.Email))
+                <input type="email" class="form-control" id="Email" name="Email" @bind="@_adoptionForm.Email">
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.Email))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmailFormInfo
@@ -98,8 +98,8 @@ else
             </div>
             <div class="form-group">
                 <label for="NumerTelefonu">Numer telefonu:</label>
-                <input type="tel" class="form-control" id="NumerTelefonu" name="NumerTelefonu" @bind="@adoptionForm.PhoneNumber">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber))
+                <input type="tel" class="form-control" id="NumerTelefonu" name="NumerTelefonu" @bind="@_adoptionForm.PhoneNumber">
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.PhoneNumber))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.PhoneNumberFormInfo
@@ -108,8 +108,8 @@ else
             </div>
             <div class="form-group">
                 <label for="OMnie">O mnie:</label>
-                <textarea class="form-control" id="OMnie" name="OMnie" rows="3" @bind="@adoptionForm.AboutMe"></textarea>
-                @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe))
+                <textarea class="form-control" id="OMnie" name="OMnie" rows="3" @bind="@_adoptionForm.AboutMe"></textarea>
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.AboutMe))
                 {
                     <div class="invalid-feedback">
                         @ErrorMessagesConstants.EmptyField
@@ -117,26 +117,26 @@ else
                 }
             </div>
             <div class="ml-auto">
-                @if (string.IsNullOrWhiteSpace(adoptionForm.AboutMe)
-                     || string.IsNullOrWhiteSpace(adoptionForm.PhoneNumber)
-                     || string.IsNullOrWhiteSpace(adoptionForm.Email)
-                     || string.IsNullOrWhiteSpace(adoptionForm.Age)
-                     || string.IsNullOrWhiteSpace(adoptionForm.LastName)
-                     || string.IsNullOrWhiteSpace(adoptionForm.FirstName))
+                @if (string.IsNullOrWhiteSpace(_adoptionForm.AboutMe)
+                     || string.IsNullOrWhiteSpace(_adoptionForm.PhoneNumber)
+                     || string.IsNullOrWhiteSpace(_adoptionForm.Email)
+                     || string.IsNullOrWhiteSpace(_adoptionForm.Age)
+                     || string.IsNullOrWhiteSpace(_adoptionForm.LastName)
+                     || string.IsNullOrWhiteSpace(_adoptionForm.FirstName))
                 {
-                    formValid = false;
+                    _formValid = false;
                 }
                 else
                 {
-                    formValid = true;
+                    _formValid = true;
                 }
-                <div class="alert alert-danger d-none" @bind:hidden="@showSuccessMessage" id="error-message">
+                <div class="alert alert-danger d-none" @bind:hidden="@_showSuccessMessage" id="error-message">
                     @ErrorMessagesConstants.ValidationFailed
                 </div>
-                <div class="alert alert-success d-none" @bind:hidden="@showErrorMessage" id="success-message">
+                <div class="alert alert-success d-none" @bind:hidden="@_showErrorMessage" id="success-message">
                     Formularz został wysłany
                 </div>
-                <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!formValid)" @onclick="HandleSubmit">Zatwierdź</button>
+                <button type="submit" class="btn btn-primary adoption-submit-btn" disabled="@(!_formValid)" @onclick="HandleSubmit">Zatwierdź</button>
             </div>
         </form>
     </div>
@@ -144,14 +144,14 @@ else
 }
 
 @code {
-    private UserAdoptionForm adoptionForm = new UserAdoptionForm();
-    private Animal animal = null;
-    private bool formValid = true;
-    private bool showErrorMessage = false;
-    private bool showSuccessMessage = false;
-    private bool internalError = false;
-    private bool IsSubmitting = false;
-    private bool IsSubmitted = false;
+    private UserAdoptionForm _adoptionForm = new UserAdoptionForm();
+    private Animal? _animal = null;
+    private bool _formValid = true;
+    private bool _showErrorMessage = false;
+    private bool _showSuccessMessage = false;
+    private readonly bool internalError = false;
+    private bool _isSubmitting = false;
+    private bool _isSubmitted = false;
 
     [Parameter]
     public int Id { get; set; }
@@ -161,16 +161,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        animal = await AnimalService.GetAnimalAsync(Id);
-        if (animal != null)
+        _animal = await AnimalService.GetAnimalAsync(Id);
+        if (string.IsNullOrWhiteSpace(_animal?.ErrorMessage))
         {
-            adoptionForm = new UserAdoptionForm();
-            adoptionForm.AnimalId = Id;
+            _adoptionForm = new UserAdoptionForm();
+            _adoptionForm.AnimalId = Id;
         }
         else
         {
-            internalError = true;
             StateHasChanged();
+            ToastService.ShowError(_animal.ErrorMessage);
             await Task.Delay(3000);
             Navigation.NavigateTo("/");
         }
@@ -178,41 +178,44 @@ else
 
     private async Task HandleSubmit()
     {
-        IsSubmitting = true;
+        _isSubmitting = true;
         StateHasChanged();
 
         try
         {
-            IsSubmitting = true;
+            _isSubmitting = true;
             StateHasChanged();
 
-            var result = await AdoptionFormService.AddNewForm(adoptionForm);
+            var result = await AdoptionFormService.AddNewForm(_adoptionForm);
 
-            if(result != null)
+            if(string.IsNullOrWhiteSpace(result?.ErrorMessage))
             {
-                IsSubmitting = false;
-                IsSubmitted = true;
-                showErrorMessage = false;
-                showSuccessMessage = true;
+                _isSubmitting = false;
+                _isSubmitted = true;
+                _showErrorMessage = false;
+                _showSuccessMessage = true;
                 StateHasChanged();
                 ToastService.ShowSuccess("Pomyślnie wysłano formularz adopcyjny");
                 await Task.Delay(1000);
                 Navigation.NavigateTo("/");
             }
-            else if (result == null)
+            else if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
             {
-                IsSubmitting = false;
-                showErrorMessage = true;
-                showSuccessMessage = false;
+                
+                _showErrorMessage = true;
+                _showSuccessMessage = false;
                 StateHasChanged();
-                ToastService.ShowError("Coś poszło nie tak podczas wysłania formularza. Spróbuj ponownie.");
+                ToastService.ShowError(result.ErrorMessage);
                 await Task.Delay(3000);
                 Navigation.NavigateTo("/");
             }
         }
         catch (Exception ex)
         {
-            ToastService.ShowError("Coś poszło nie tak podczas wysłania formularza. Spróbuj ponownie.");
+            _isSubmitting = false;
+            _showErrorMessage = true;
+            StateHasChanged();
+            ToastService.ShowError(ex.Message);
             await Task.Delay(2000);
             Navigation.NavigateTo(Navigation.Uri, true);
         }

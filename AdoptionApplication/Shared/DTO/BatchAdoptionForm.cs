@@ -1,6 +1,6 @@
 ﻿namespace AdoptionApplication.Shared.DTO;
 
-public class BatchAdoptionForm
+public class BatchAdoptionForm : BasicResponse
 {
     public int Total { get; set; }
     public ICollection<UserAdoptionForm> AdoptionForms { get; set; }

@@ -79,7 +79,7 @@ else
 }
 
 @code {
-    public UserAdoptionForm Form { get; set; } = new(){
+    public UserAdoptionForm? Form { get; set; } = new(){
         Id = 0, Status = AdoptionFormStatusConstants.New, AnimalId = 0, Animal = new Animal{Id = 0}};
     [Parameter]
     public string Id { get; set; }
@@ -98,7 +98,7 @@ else
         try
         {
             var result = await AdoptionFormService.ChangeStatus(Form);
-            if (result != null)
+            if (string.IsNullOrWhiteSpace(result?.ErrorMessage))
             {
                 ToastService.ShowSuccess("Pomyślnie zaktualizowano formularz.");
                 await Task.Delay(1000);
@@ -106,14 +106,14 @@ else
             }
             else
             {
-                ToastService.ShowError("Coś poszło nie tak podczas aktualizowania formularza. Spróbuj ponownie później.");
+                ToastService.ShowError(result.ErrorMessage);
                 await Task.Delay(1000);
                 NavigationManager.NavigateTo($"/animal/adoptionForm/all");
             }
         }
         catch (Exception ex)
         {
-            ToastService.ShowError("Coś poszło nie tak podczas aktualizowania formularza. Spróbuj ponownie później.");
+            ToastService.ShowError(ex.Message);
             await Task.Delay(1000);
             NavigationManager.NavigateTo($"/animal/adoptionForm/all");
         }

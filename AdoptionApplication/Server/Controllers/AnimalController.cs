@@ -17,44 +17,48 @@ namespace AdoptionApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BatchAnimal>> GetAnimals([FromQuery] int? page, [FromQuery]bool? isAdopted, [FromQuery]string? city, [FromQuery]string? province)
+        public async Task<ActionResult<BatchAnimal>> GetAnimals([FromQuery] int? page, [FromQuery]bool? isAdopted, 
+            [FromQuery]string? city, [FromQuery]string? province)
         {
-            var animals = await _animalService.GetAnimalsAsync(page, isAdopted, city, province);
-            return Ok(animals);
+            var result = await _animalService.GetAnimalsAsync(page, isAdopted, city, province);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
 
         }
 
         [HttpGet("Species/{speciesUrl}")]
-        public async Task<ActionResult<BatchAnimal>> GetAnimalsBySpecies(string speciesUrl, [FromQuery] int? page, [FromQuery]bool? isAdopted, [FromQuery]string? city, [FromQuery]string? province)
+        public async Task<ActionResult<BatchAnimal>> GetAnimalsBySpecies(string speciesUrl, [FromQuery] int? page, 
+            [FromQuery]bool? isAdopted, [FromQuery]string? city, [FromQuery]string? province)
         {
-            var animals = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl, page, isAdopted, city, province);
-            return Ok(animals);
+            var result = await _animalService.GetAnimalsBySpeciesAsync(speciesUrl, page, isAdopted, city, province);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Animal>> GetAnimal(int id)
         {
-            var animal = await _animalService.GetAnimalByIdAsync(id);
-            return Ok(animal);
+            var result = await _animalService.GetAnimalByIdAsync(id);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
         }
 
         [HttpPut]
         public async Task<ActionResult<Animal>> UpsertAnimal([FromBody] Animal animal)
         {
-            try
-            {
-                var result = await _animalService.UpsertAnimalAsync(animal);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}, {ex.StackTrace}");
-            }
+            var result = await _animalService.UpsertAnimalAsync(animal);
+            if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                return Conflict(result);
+            return Ok(result);
+            
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAnimal(int id)
-        {
+        { 
             await _animalService.DeleteAnimal(id);
             return Ok();
         }

@@ -23,7 +23,9 @@ namespace AdoptionApplication.Server.Services.Animals
             _validator = validator;
         }
 
-        public async Task<Animal> GetAnimalByIdAsync(int id) => await _dataContext.Animals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false);
+        public async Task<Animal> GetAnimalByIdAsync(int id) => await _dataContext.Animals
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? new Animal{ErrorMessage = "Zwierzę nie znalezione"};
 
         public async Task<BatchAnimal> GetAnimalsAsync(int? page, bool? isAdopted, string? city, string? province) 
         {
@@ -81,7 +83,8 @@ namespace AdoptionApplication.Server.Services.Animals
             {
                 var validation = _validator.Validate(animal);
                 if (!validation.IsValid)
-                    return null;
+                    return new Animal
+                        { ErrorMessage = string.Join(", ", validation.Errors.Select(x => x.ErrorMessage).ToList()) };
 
                 animal.DateOfBirth = DateTime.SpecifyKind(animal.DateOfBirth.Value, DateTimeKind.Utc);
                 if(animal.AdoptionDate.HasValue)
@@ -106,7 +109,7 @@ namespace AdoptionApplication.Server.Services.Animals
             }
             catch (Exception ex)
             {
-                throw (ex);
+                return new Animal { ErrorMessage = ex.Message };
             }
         }
 
@@ -114,6 +117,13 @@ namespace AdoptionApplication.Server.Services.Animals
         {
             var animal = await _dataContext.Animals.FirstOrDefaultAsync(x => x.Id == id);
             if (animal == null) return;
+            
+            var forms = await _dataContext.AdoptionForms
+                .Where(x => x.AnimalId == animal.Id)
+                .ToListAsync();
+            foreach (var form in forms)
+                form.Deleted = true;
+            
             animal.Deleted = true;
             await _dataContext.SaveChangesAsync();
         }
