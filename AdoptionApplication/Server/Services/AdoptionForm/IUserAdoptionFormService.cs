@@ -1,4 +1,5 @@
 ﻿using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Server.Services.AdoptionForm

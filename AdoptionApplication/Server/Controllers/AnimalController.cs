@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Server.Services.Animals;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
 

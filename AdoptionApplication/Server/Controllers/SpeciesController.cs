@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Server.Services.SpeciesService;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdoptionApplication.Server.Controllers

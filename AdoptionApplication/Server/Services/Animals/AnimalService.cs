@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Server.Services.SpeciesService;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -91,10 +92,22 @@ namespace AdoptionApplication.Server.Services.Animals
                     animal.AdoptionDate = DateTime.SpecifyKind(animal.AdoptionDate.Value, DateTimeKind.Utc);
                 if (animal.Id > 0)
                 {
-                    var dbAnimal = await _dataContext.Animals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == animal.Id);
+                    var dbAnimal = await _dataContext.Animals.FirstOrDefaultAsync(x => x.Id == animal.Id);
                     if (dbAnimal != null)
                     {
-                        _dataContext.Entry(animal).State = EntityState.Modified;
+                        dbAnimal.Name = animal.Name;
+                        dbAnimal.City = animal.City;
+                        dbAnimal.Description = animal.Description;
+                        dbAnimal.Gender = animal.Gender;
+                        dbAnimal.ShortDescription = animal.ShortDescription;
+                        dbAnimal.Image = animal.Image;
+                        dbAnimal.Province = animal.Province;
+                        dbAnimal.SpeciesId = animal.SpeciesId;
+                        dbAnimal.AdoptionDate = animal.AdoptionDate;
+                        dbAnimal.IsAdopted = animal.IsAdopted;
+                        dbAnimal.HealthStatus = animal.HealthStatus;
+                        dbAnimal.DateOfBirth = animal.DateOfBirth;
+                        animal = dbAnimal;
                     }
                     else
                         _dataContext.Animals.Add(animal);

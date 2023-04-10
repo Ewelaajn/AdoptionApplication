@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +55,7 @@ namespace AdoptionApplication.Server.Services.SpeciesService
                         dbSpecies.Url = species.Url;
                         dbSpecies.Name = species.Name;
                         dbSpecies.Icon = species.Icon;
+                        species = dbSpecies;
                     }
                     else
                         _dataContext.Species.Add(species);

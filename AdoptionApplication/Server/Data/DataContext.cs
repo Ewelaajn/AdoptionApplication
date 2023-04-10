@@ -1,5 +1,6 @@
 ﻿using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using AdoptionApplication.Shared.DbModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdoptionApplication.Server.Data

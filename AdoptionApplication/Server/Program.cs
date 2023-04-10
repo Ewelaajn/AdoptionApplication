@@ -5,6 +5,7 @@ using AdoptionApplication.Server.Services.AdoptionForm;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.Validators;
 using Microsoft.AspNetCore.HttpOverrides;
 

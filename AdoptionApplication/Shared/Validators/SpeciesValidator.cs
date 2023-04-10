@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AdoptionApplication.Shared.DbModels;
+using FluentValidation;
 
 namespace AdoptionApplication.Shared.Validators
 {

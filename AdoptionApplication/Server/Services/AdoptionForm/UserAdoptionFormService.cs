@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Server.Data;
 using AdoptionApplication.Shared;
 using AdoptionApplication.Shared.Constants;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,5 @@
 ﻿using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 
 namespace AdoptionApplication.Server.Services.SpeciesService
 {

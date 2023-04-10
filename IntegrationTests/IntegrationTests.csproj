@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bogus" Version="34.0.2" />
+      <PackageReference Include="FluentAssertions" Version="6.10.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.14" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.14" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.14">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.14">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
+      <PackageReference Include="NUnit" Version="3.13.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdoptionApplication\Server\AdoptionApplication.Server.csproj" />
+    </ItemGroup>
+
+</Project>

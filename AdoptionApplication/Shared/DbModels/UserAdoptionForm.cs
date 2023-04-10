@@ -1,9 +1,7 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using AdoptionApplication.Shared.DTO;
 
-namespace AdoptionApplication.Shared
+namespace AdoptionApplication.Shared.DbModels
 {
     public class UserAdoptionForm: BasicResponse
     {

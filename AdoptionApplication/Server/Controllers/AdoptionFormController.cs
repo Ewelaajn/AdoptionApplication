@@ -2,6 +2,7 @@
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using AdoptionApplication.Server.Services.AdoptionForm;
 using AdoptionApplication.Shared;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Server.Controllers

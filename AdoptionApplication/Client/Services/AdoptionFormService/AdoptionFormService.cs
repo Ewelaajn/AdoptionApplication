@@ -1,6 +1,7 @@
 ﻿using AdoptionApplication.Shared;
 using System.Net.Http.Json;
 using System.Text.Json;
+using AdoptionApplication.Shared.DbModels;
 using AdoptionApplication.Shared.DTO;
 
 namespace AdoptionApplication.Client.Services.AdoptionFormService

@@ -1,4 +1,6 @@
-﻿namespace AdoptionApplication.Shared.DTO
+﻿using AdoptionApplication.Shared.DbModels;
+
+namespace AdoptionApplication.Shared.DTO
 {
     public class UserAdoptionFormDto : BasicResponse
     {

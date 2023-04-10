@@ -3,6 +3,7 @@ using AdoptionApplication.Shared.Constants;
 using AdoptionApplication.Shared.DTO;
 using System.Net.Http.Json;
 using System.Text.Json;
+using AdoptionApplication.Shared.DbModels;
 
 namespace AdoptionApplication.Client.Services.AnimalService
 {

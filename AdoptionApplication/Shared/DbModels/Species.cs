@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using AdoptionApplication.Shared.DTO;
 
-namespace AdoptionApplication.Shared
+namespace AdoptionApplication.Shared.DbModels
 {
     public class Species: BasicResponse
     {
