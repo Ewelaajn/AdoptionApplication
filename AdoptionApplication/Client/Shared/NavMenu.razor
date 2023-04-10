@@ -1,5 +1,6 @@
 ﻿@inject ISpeciesService SpeciesService
 @inject IToastService ToastService
+@inject IIdentityService IdentityService
 @using Blazored.Toast.Configuration
 @using Blazored.Modal
 @using Blazored.Modal.Services
@@ -33,19 +34,23 @@
                 </a>
             </li>
         }
-        <li class="nav-item">
-            <a class="nav-link" @onclick="ShowModal" style="cursor: pointer;">
-                <head>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
-                </head>
-                <i class="fas fa-plus mr-2"></i> Dodaj nowy
-            </a>
-        </li>
+        @if (Ip == IpConstants.AdminIp)
+        {
+            <li class="nav-item">
+                <a class="nav-link" @onclick="ShowModal" style="cursor: pointer;">
+                    <head>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+                    </head>
+                    <i class="fas fa-plus mr-2"></i> Dodaj nowy
+                </a>
+            </li>
+        }
     </ul>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
+    private string Ip = null;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
@@ -58,6 +63,7 @@
     protected override async Task OnInitializedAsync()
     {
         await SpeciesService.LoadSpecies();
+        Ip = await IdentityService.GetIp();
     }
 
     private async Task ShowModal()

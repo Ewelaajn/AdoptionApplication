@@ -6,7 +6,7 @@ namespace AdoptionApplication.Shared.Validators
     {
         public AnimalValidator()
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Imię nie może być pust3e");
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Imię nie może być puste");
             RuleFor(x => x.Description).NotEmpty().WithMessage("Opis musi być wypełniony");
             RuleFor(x => x.Gender).NotEmpty().WithMessage("Należy wybrać płeć zwierzęcia");
             RuleFor(x => x.ShortDescription).NotEmpty().WithMessage("Należy wypełnić krótki opis");
